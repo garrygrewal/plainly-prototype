@@ -144,3 +144,21 @@ export function eventSide(m: LiveMarket, e: { type: string; team?: Team }): "yes
   const helps = e.type === "goal" ? e.team : e.team === "home" ? "away" : "home";
   return helps === m.yesTeam ? "yes" : "no";
 }
+
+/** What the user put in and got back on a market they've finished with. */
+export function realized(ledger: LedgerEntry[], marketId: string) {
+  let paid = 0;
+  let got = 0;
+  let cashedOut = false;
+  let settled = false;
+  for (const e of ledger) {
+    if (e.marketId !== marketId) continue;
+    if (e.kind === "buy") paid += e.amount;
+    else {
+      got += e.amount;
+      if (e.kind === "sell") cashedOut = true;
+      else settled = true;
+    }
+  }
+  return { paid, got, pnl: got - paid, cashedOut, settled, any: paid > 0 };
+}

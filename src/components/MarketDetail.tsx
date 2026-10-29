@@ -22,7 +22,7 @@ import { HowItWorks } from "./HowItWorks";
 import { type MarketView, useMarketView } from "./hooks";
 import { ChevronLeft, ChevronRight } from "./icons";
 import { LiquidityNote } from "./LiquidityNote";
-import { PositionCard } from "./PositionCard";
+import { PositionCard, ResultCard } from "./PositionCard";
 import { type ChartEvent, ProbabilityChart } from "./ProbabilityChart";
 
 export function MarketDetail({ id }: { id: string }) {
@@ -54,6 +54,7 @@ export function MarketDetail({ id }: { id: string }) {
         <AnimatePresence initial={false}>
           {view.position && <PositionCard key="pos" view={view} />}
         </AnimatePresence>
+        <ResultCard view={view} />
 
         <ChartSection view={view} />
 
@@ -362,7 +363,7 @@ function chartSummary(view: MarketView, events: GameEvent[]): string {
   const who = m.yesLabel.replace(" win", "");
   const base = `The ${who}’ chance was ${pct(start)} at puck drop and is ${pct(pYes)} now.`;
   return biggest
-    ? `${base} Biggest move so far: ${biggest.ev.title.toLowerCase()} in the ${eventClock(biggest.ev.t).split(",")[0]}, ${signedPts(biggest.d * 100, 0)}.`
+    ? `${base} Biggest move so far: ${biggest.ev.title} in the ${eventClock(biggest.ev.t).split(",")[0]} (${signedPts(biggest.d * 100, 0)}).`
     : base;
 }
 

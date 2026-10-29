@@ -28,7 +28,7 @@ import {
   simulateTo,
 } from "@/lib/sim/engine";
 import { GAME_LENGTH } from "@/lib/sim/winProb";
-import { pct, signedPct, usd } from "@/lib/format";
+import { pct, signedPct, signedUsd, usd } from "@/lib/format";
 import { holdings, scoreLine } from "@/lib/selectors";
 
 /** Demo clock time when every game is over. */
@@ -117,6 +117,12 @@ function initialData(): DemoData {
   };
 }
 
+function priceBefore(history: { t: number; p: number }[], t: number): number {
+  let p = history[0]?.p ?? 0.5;
+  for (const pt of history) if (pt.t <= t) p = pt.p;
+  return p;
+}
+
 /** Builds the come-back notification once the price has settled after an event. */
 function buildNotice(
   data: DemoData,
@@ -152,15 +158,25 @@ function buildNotice(
   const held = holdings(data.ledger, m.id);
 
   if (held.yes + held.no > 0) {
+    // Only credit the event with moves after both it and the user's last buy.
+    const lastBuy = Math.max(
+      -Infinity,
+      ...data.ledger.filter((e) => e.marketId === m.id && e.kind === "buy").map((e) => e.t + m.clockOffset),
+    );
+    const from = lastBuy > ev.t ? priceBefore(sim.history, lastBuy) : before;
     const value = (py: number) => held.yes * py + held.no * (1 - py);
-    const change = (value(now) - value(before)) / value(before);
-    const dir = change >= 0 ? "up" : "down";
+    const change = value(now) / value(from) - 1;
+    const pnl = value(now) - held.costYes - held.costNo;
+    const overall = `You’re ${signedUsd(pnl)} overall.`;
     return {
       id,
       marketId: m.id,
       eventId: ev.id,
       title,
-      body: `Your position is ${dir} ${signedPct(change).replace(/^[+−]/, "")}. Tap to see why.`,
+      body:
+        Math.abs(change) >= 0.01
+          ? `That moved your position ${change > 0 ? "up" : "down"} ${signedPct(change).replace(/^[+−]/, "")}. ${overall}`
+          : overall,
     };
   }
   if (!m.followed) return null;

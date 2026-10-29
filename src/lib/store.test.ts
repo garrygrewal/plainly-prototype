@@ -56,6 +56,14 @@ describe("demo store", () => {
     // Tick through the first goal (t=372) and the settling delay.
     for (let i = 0; i < 30; i++) s().tick(500);
     expect(s().notice?.title).toMatch(/Goal, Gulls/);
-    expect(s().notice?.body).toMatch(/Your position is up/);
+    expect(s().notice?.body).toMatch(/moved your position up \d+%/);
+    expect(s().notice?.body).toMatch(/overall/);
+  });
+
+  it("doesn't credit a goal for moves that happened before you bought", () => {
+    s().seek(400); // after the first goal at 372
+    s().buy(HERO_ID, "yes", 50);
+    for (let i = 0; i < 4; i++) s().tick(500);
+    expect(s().notice?.body ?? "").not.toMatch(/up 2\d%/);
   });
 });
