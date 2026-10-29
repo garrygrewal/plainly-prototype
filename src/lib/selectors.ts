@@ -130,3 +130,17 @@ export function marketStatus(m: Market, clock: number, resolved: boolean): Marke
   if (resolved) return "final";
   return gameTime(m, clock) > 0 ? "live" : "upcoming";
 }
+
+/** Events that get a marker on the chart (period breaks and the final are drawn differently). */
+export function markerEvents(m: LiveMarket, fired: string[]) {
+  return m.script.filter(
+    (e) => fired.includes(e.id) && e.type !== "period_end" && e.type !== "final",
+  );
+}
+
+/** Which outcome an event helps: a goal helps the scorer, a penalty or injury helps the other team. */
+export function eventSide(m: LiveMarket, e: { type: string; team?: Team }): "yes" | "no" | null {
+  if (!e.team || e.type === "goalie_pulled") return null;
+  const helps = e.type === "goal" ? e.team : e.team === "home" ? "away" : "home";
+  return helps === m.yesTeam ? "yes" : "no";
+}

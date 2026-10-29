@@ -1,26 +1,148 @@
 @import "tailwindcss";
 
+/*
+ * Plainly design tokens.
+ * One typeface, a warm paper/ink neutral, and two outcome colours chosen to
+ * stay distinct for colour-blind viewers (blue = Yes, burnt orange = No).
+ * Outcome colours are always paired with a text label.
+ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --bg: #f6f4ef;
+  --backdrop: #e9e6de;
+  --surface: #ffffff;
+  --surface-2: #efece6;
+  --ink: #15171a;
+  --ink-2: #4a4d52;
+  --ink-3: #65686e;
+  --line: #e3dfd6;
+  --yes: #2f5bea;
+  --yes-soft: #e7edfd;
+  --no: #b9521c;
+  --no-soft: #f8eadf;
+  --live: #c8364d;
+  --scrim: rgb(21 23 26 / 0.32);
+  --shadow: 0 1px 2px rgb(21 23 26 / 0.06), 0 8px 24px rgb(21 23 26 / 0.06);
+  --shadow-lg: 0 2px 4px rgb(21 23 26 / 0.06), 0 30px 80px rgb(21 23 26 / 0.16);
+  color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+  :root:not([data-theme="light"]) {
+    --bg: #0f1012;
+    --backdrop: #08090a;
+    --surface: #18191c;
+    --surface-2: #222327;
+    --ink: #eceae4;
+    --ink-2: #b5b3ad;
+    --ink-3: #8f8e89;
+    --line: #2c2d31;
+    --yes: #86a2ff;
+    --yes-soft: #1c2440;
+    --no: #f0915c;
+    --no-soft: #3a241a;
+    --live: #ff6f86;
+    --scrim: rgb(0 0 0 / 0.55);
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 30px 80px rgb(0 0 0 / 0.6);
+    color-scheme: dark;
   }
 }
 
+:root[data-theme="dark"] {
+  --bg: #0f1012;
+  --backdrop: #08090a;
+  --surface: #18191c;
+  --surface-2: #222327;
+  --ink: #eceae4;
+  --ink-2: #b5b3ad;
+  --ink-3: #8f8e89;
+  --line: #2c2d31;
+  --yes: #86a2ff;
+  --yes-soft: #1c2440;
+  --no: #f0915c;
+  --no-soft: #3a241a;
+  --live: #ff6f86;
+  --scrim: rgb(0 0 0 / 0.55);
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 30px 80px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-backdrop: var(--backdrop);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-yes: var(--yes);
+  --color-yes-soft: var(--yes-soft);
+  --color-no: var(--no);
+  --color-no-soft: var(--no-soft);
+  --color-live: var(--live);
+  --color-scrim: var(--scrim);
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --shadow-card: var(--shadow);
+  --shadow-float: var(--shadow-lg);
+}
+
+html,
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--backdrop);
+  color: var(--ink);
+}
+
+body {
+  font-family: var(--font-sans);
+  font-feature-settings: "ss01";
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Numbers that change should never jiggle sideways. */
+.num {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.01em;
+}
+
+:focus-visible {
+  outline: 2px solid var(--yes);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Scrollbars inside the phone frame stay out of the way. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Theme-dependent icons (unlayered, so they win over utilities). */
+:root[data-theme="dark"] .dark-hide {
+  display: none;
+}
+:root[data-theme="dark"] .dark-show {
+  display: block;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .dark-hide {
+    display: none;
+  }
+  :root:not([data-theme="light"]) .dark-show {
+    display: block;
+  }
 }

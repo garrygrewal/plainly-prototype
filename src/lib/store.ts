@@ -65,6 +65,8 @@ interface DemoData {
   pending: PendingNotice[];
   notice: Notice | null;
   sheet: Sheet | null;
+  /** Set by a notification tap: which moment the market screen should open on. */
+  focusEvent: { marketId: string; eventId: string; at: number } | null;
   seq: number;
 }
 
@@ -110,6 +112,7 @@ function initialData(): DemoData {
     pending: [],
     notice: null,
     sheet: null,
+    focusEvent: null,
     seq: 0,
   };
 }
