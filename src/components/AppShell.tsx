@@ -1,6 +1,6 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -93,49 +93,51 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [pathname, closeSheet]);
 
   return (
-    <div className="min-h-dvh bg-backdrop lg:flex lg:items-center lg:justify-center lg:gap-14 lg:px-10 lg:py-10">
-      <aside className="hidden w-[340px] shrink-0 lg:block">
-        <p className="text-[15px] font-semibold tracking-tight">Plainly</p>
-        <h1 className="mt-3 text-[28px] font-semibold leading-[1.15] tracking-tight text-balance">
-          Prediction markets that explain themselves.
-        </h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
-          Follow one live hockey game from discovery to cash-out. Every price comes
-          in plain words, and you can see why it moved. All money here is pretend.
-        </p>
-        <Link
-          href="/about"
-          className="mt-4 inline-flex items-center gap-1 text-[15px] font-medium text-ink underline decoration-line decoration-2 underline-offset-4 hover:decoration-ink"
-        >
-          Read the case study →
-        </Link>
-        <div className="mt-8">
-          <DemoPanel />
-        </div>
-      </aside>
+    <MotionConfig reducedMotion="user">
+      <div className="min-h-dvh bg-backdrop lg:flex lg:items-center lg:justify-center lg:gap-14 lg:px-10 lg:py-10">
+        <aside className="hidden w-[340px] shrink-0 lg:block">
+          <p className="text-[15px] font-semibold tracking-tight">Plainly</p>
+          <h1 className="mt-3 text-[28px] font-semibold leading-[1.15] tracking-tight text-balance">
+            Prediction markets that explain themselves.
+          </h1>
+          <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
+            Follow one live hockey game from discovery to cash-out. Every price comes
+            in plain words, and you can see why it moved. All money here is pretend.
+          </p>
+          <Link
+            href="/about"
+            className="mt-4 inline-flex items-center gap-1 text-[15px] font-medium text-ink underline decoration-line decoration-2 underline-offset-4 hover:decoration-ink"
+          >
+            Read the case study →
+          </Link>
+          <div className="mt-8">
+            <DemoPanel />
+          </div>
+        </aside>
 
-      <div
-        className="relative flex h-dvh w-full flex-col overflow-hidden bg-bg lg:h-[844px] lg:max-h-[calc(100dvh-80px)] lg:w-[390px] lg:shrink-0 lg:rounded-[44px] lg:border lg:border-line lg:shadow-float"
-      >
-        <DemoStrip open={panelOpen} onToggle={() => setPanelOpen((o) => !o)} />
-        <AnimatePresence>
-          {panelOpen && (
-            <motion.div
-              id="demo-panel-mobile"
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.18 }}
-              className="absolute inset-x-3 top-11 z-40 rounded-3xl border border-line bg-surface p-4 shadow-float lg:hidden"
-            >
-              <DemoPanel compact />
-            </motion.div>
-          )}
-        </AnimatePresence>
-        <div className="relative min-h-0 flex-1">{children}</div>
-        <NoticeBanner />
-        <SheetHost />
+        <div
+          className="relative flex h-dvh w-full flex-col overflow-hidden bg-bg lg:h-[844px] lg:max-h-[calc(100dvh-80px)] lg:w-[390px] lg:shrink-0 lg:rounded-[44px] lg:border lg:border-line lg:shadow-float"
+        >
+          <DemoStrip open={panelOpen} onToggle={() => setPanelOpen((o) => !o)} />
+          <AnimatePresence>
+            {panelOpen && (
+              <motion.div
+                id="demo-panel-mobile"
+                initial={{ opacity: 0, y: -8 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -8 }}
+                transition={{ duration: 0.18 }}
+                className="absolute inset-x-3 top-11 z-40 rounded-3xl border border-line bg-surface p-4 shadow-float lg:hidden"
+              >
+                <DemoPanel compact />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <div className="relative min-h-0 flex-1">{children}</div>
+          <NoticeBanner />
+          <SheetHost />
+        </div>
       </div>
-    </div>
+    </MotionConfig>
   );
 }

@@ -10,7 +10,15 @@ const geist = Geist({
 const description =
   "A concept for prediction markets that explain themselves: one live hockey game, from discovery to cash-out, with every probability in plain words.";
 
+// Absolute URLs for the Open Graph image. Vercel sets the production domain.
+const siteUrl =
+  process.env.NEXT_PUBLIC_SITE_URL ??
+  (process.env.VERCEL_PROJECT_PRODUCTION_URL
+    ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+    : "http://localhost:3000");
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: {
     default: "Plainly: prediction markets in plain words",
     template: "%s · Plainly",

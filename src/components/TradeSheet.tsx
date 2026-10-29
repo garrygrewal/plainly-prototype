@@ -88,7 +88,7 @@ function TradeForm({
         Buy {side === "yes" ? "Yes" : "No"} · {label}
       </h2>
 
-      <div role="radiogroup" aria-label="Pick a side" className="mt-4 grid grid-cols-2 gap-2">
+      <div role="group" aria-label="Pick a side" className="mt-4 grid grid-cols-2 gap-2">
         {(["yes", "no"] as const).map((s) => {
           const on = side === s;
           const p = s === "yes" ? pYes : 1 - pYes;
@@ -96,8 +96,7 @@ function TradeForm({
             <button
               key={s}
               type="button"
-              role="radio"
-              aria-checked={on}
+              aria-pressed={on}
               onClick={() => setSide(s)}
               className={`flex h-14 flex-col items-start justify-center rounded-2xl border-2 px-3.5 text-left transition-colors ${
                 on

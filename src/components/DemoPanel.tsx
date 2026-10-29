@@ -43,7 +43,7 @@ export function DemoPanel({ compact = false }: { compact?: boolean }) {
         </button>
 
         <div
-          role="radiogroup"
+          role="group"
           aria-label="Game speed"
           className="flex rounded-full bg-surface-2 p-1"
         >
@@ -51,8 +51,7 @@ export function DemoPanel({ compact = false }: { compact?: boolean }) {
             <button
               key={s}
               type="button"
-              role="radio"
-              aria-checked={speed === s}
+              aria-pressed={speed === s}
               onClick={() => setSpeed(s)}
               className={`num h-9 rounded-full px-3 text-sm transition-colors ${
                 speed === s ? "bg-surface text-ink shadow-card" : "text-ink-2 hover:text-ink"

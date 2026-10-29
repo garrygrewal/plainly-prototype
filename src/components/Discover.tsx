@@ -45,14 +45,12 @@ export function Discover() {
         <h1 className="text-[28px] font-semibold tracking-tight">Markets</h1>
         <p className="mt-0.5 text-[15px] text-ink-2">Tonight’s games, and a few other questions.</p>
 
-        <div role="tablist" aria-label="Filter markets" className="mt-4 flex gap-2">
+        <div role="group" aria-label="Filter markets" className="mt-4 flex gap-2">
           {(["all", "following", "live"] as const).map((f) => (
             <button
               key={f}
               type="button"
-              role="tab"
-              aria-selected={filter === f}
-              aria-controls="market-list"
+              aria-pressed={filter === f}
               onClick={() => setFilter(f)}
               className={`num h-9 rounded-full px-3.5 text-sm font-medium transition-colors ${
                 filter === f ? "bg-ink text-bg" : "bg-surface text-ink-2 shadow-card hover:text-ink"
@@ -67,7 +65,7 @@ export function Discover() {
           <p className="mt-3 text-[13px] text-ink-3">Markets about the team you follow: the Harbourview Gulls.</p>
         )}
 
-        <ul id="market-list" role="tabpanel" className="mt-4 space-y-3">
+        <ul aria-label="Markets" className="mt-4 space-y-3">
           <AnimatePresence initial={false} mode="popLayout">
             {shown.map((m) => (
               <motion.li
