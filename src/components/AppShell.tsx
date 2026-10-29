@@ -45,12 +45,14 @@ function DemoStrip({ open, onToggle }: { open: boolean; onToggle: () => void }) 
 
   return (
     <div className="relative z-30 flex h-9 shrink-0 items-center justify-between gap-2 border-b border-line bg-bg px-4 text-[11px] text-ink-3">
-      <span className="flex items-center gap-1.5">
-        <span aria-hidden className="size-1.5 rounded-full bg-ink-3" />
-        Concept prototype · demo money, not real
+      <span className="flex min-w-0 items-center gap-1.5">
+        <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-ink-3" />
+        <span className="truncate">
+          Concept prototype · demo money<span className="max-[400px]:hidden">, not real</span>
+        </span>
       </span>
       {/* On small screens the demo controls live behind this button. */}
-      <span className="flex items-center gap-1 lg:hidden">
+      <span className="flex shrink-0 items-center gap-1 whitespace-nowrap lg:hidden">
         <button
           type="button"
           onClick={() => useDemo.getState().setPlaying(!playing)}

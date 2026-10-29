@@ -263,7 +263,7 @@ const pinesTide: StaticMarket = {
   resolves: "Settles when the game ends. Overtime goals count; shootouts don't.",
   b: 1200,
   status: "upcoming",
-  when: "Tonight, 7:30 pm",
+  when: "tonight at 7:30 pm",
   pYes: 0.47,
   historySeed: 23,
   volatility: 0.03,
