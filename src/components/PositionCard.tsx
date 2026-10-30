@@ -33,6 +33,12 @@ function Stat({
   );
 }
 
+/** Like signedPct, but keeps one decimal under 1% so "+$0.15" never sits next to "0%". */
+function smallPct(r: number): string {
+  if (Math.abs(r) >= 0.01 || Math.abs(r) < 0.0005) return signedPct(r);
+  return `${r > 0 ? "+" : "−"}${Math.abs(r * 100).toFixed(1)}%`;
+}
+
 /** The user's live position: what it's worth, what they'd get, and the way out. */
 export function PositionCard({ view }: { view: MarketView }) {
   const reduce = useReducedMotion();
@@ -75,7 +81,7 @@ export function PositionCard({ view }: { view: MarketView }) {
               <AnimatedNumber value={position.pnl} format={signedUsd} />
             </Change>
           }
-          sub={signedPct(position.pnlPct)}
+          sub={smallPct(position.pnlPct)}
         />
         {ended ? (
           <Stat

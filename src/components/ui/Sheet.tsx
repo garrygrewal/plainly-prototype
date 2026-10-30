@@ -200,7 +200,7 @@ export function Sheet({
 /** Pinned to the bottom of the sheet while the content above scrolls. */
 export function SheetFooter({ children }: { children: React.ReactNode }) {
   return (
-    <div className="sticky bottom-0 -mx-4 mt-auto bg-sheet px-4 pt-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+    <div className="sticky bottom-0 -mx-4 mt-auto bg-sheet px-4 pt-4 pb-[max(16px,var(--inset-bottom))]">
       {children}
     </div>
   );

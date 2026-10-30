@@ -559,14 +559,14 @@ function TradeBar({ view }: { view: MarketView }) {
 
   if (status === "final") {
     return (
-      <div className="sticky bottom-0 z-10 border-t border-line bg-bg/90 px-4 pt-4 pb-[max(16px,env(safe-area-inset-bottom))] text-center text-subhead text-ink-2 backdrop-blur-xl">
+      <div className="sticky bottom-0 z-10 border-t border-line bg-bg/90 px-4 pt-4 pb-[max(16px,var(--inset-bottom))] text-center text-subhead text-ink-2 backdrop-blur-xl">
         This market has settled. Trading is closed.
       </div>
     );
   }
 
   return (
-    <div className="sticky bottom-0 z-10 border-t border-line bg-bg/90 px-4 pt-3 pb-[max(12px,env(safe-area-inset-bottom))] backdrop-blur-xl">
+    <div className="sticky bottom-0 z-10 border-t border-line bg-bg/90 px-4 pt-3 pb-[max(12px,var(--inset-bottom))] backdrop-blur-xl">
       <div className="grid grid-cols-2 gap-2">
         <Button
           variant="yes"

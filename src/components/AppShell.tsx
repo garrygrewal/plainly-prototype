@@ -12,6 +12,7 @@ import { useDemo } from "@/lib/store";
 import { DemoPanel } from "./DemoPanel";
 import { NoticeBanner } from "./NoticeBanner";
 import { SheetHost } from "./SheetHost";
+import { HomeIndicator, StatusBar } from "./StatusBar";
 import { Toaster } from "./ui/Toast";
 import { Pause, Play, Sliders } from "./icons";
 
@@ -38,29 +39,27 @@ function useSimClock() {
   }, []);
 }
 
-/** The thin strip at the top of the phone: always says this is a demo. */
+/**
+ * The thin strip under the status bar: always says this is a demo. Dashed,
+ * like the demo controls, so it reads as a label on the prototype, not app UI.
+ */
 function DemoStrip({ open, onToggle }: { open: boolean; onToggle: () => void }) {
   const clock = useDemo((s) => s.clock);
   const playing = useDemo((s) => s.playing);
   const t = Math.floor(gameTime(hero, clock) / 5) * 5;
 
   return (
-    <div className="relative z-30 flex h-9 shrink-0 items-center justify-between gap-2 border-b border-line bg-bg px-4 text-[11px] text-ink-3">
-      <span className="flex min-w-0 items-center gap-1.5">
-        <span aria-hidden className="size-1.5 shrink-0 rounded-full bg-ink-3" />
-        <span className="truncate">
-          Concept prototype · demo money<span className="max-[400px]:hidden">, not real</span>
-        </span>
-      </span>
+    <div className="relative z-30 flex h-8 shrink-0 items-center justify-between gap-2 border-b border-dashed border-ink-3/40 bg-bg px-4 text-caption text-ink-3">
+      <span className="truncate">Concept prototype · demo money</span>
       {/* On small screens the demo controls live behind this button. */}
-      <span className="flex shrink-0 items-center gap-1 whitespace-nowrap lg:hidden">
+      <span className="flex shrink-0 items-center gap-2 whitespace-nowrap lg:hidden">
         <button
           type="button"
           onClick={() => useDemo.getState().setPlaying(!playing)}
           aria-label={playing ? "Pause the game" : "Play the game"}
-          className="grid size-7 place-items-center rounded-full text-ink-2"
+          className="hit-area grid size-6 place-items-center text-ink-2"
         >
-          {playing ? <Pause width={14} height={14} /> : <Play width={14} height={14} />}
+          {playing ? <Pause size={14} /> : <Play size={14} />}
         </button>
         <span className="num">{hockeyClock(t).replace(" left", "")}</span>
         <button
@@ -69,9 +68,9 @@ function DemoStrip({ open, onToggle }: { open: boolean; onToggle: () => void }) 
           aria-expanded={open}
           aria-controls="demo-panel-mobile"
           aria-label="Demo controls"
-          className={`ml-1 grid size-7 place-items-center rounded-full ${open ? "bg-surface-2 text-ink" : "text-ink-2"}`}
+          className={`hit-area grid size-6 place-items-center rounded-full ${open ? "text-ink" : "text-ink-2"}`}
         >
-          <Sliders width={15} height={15} />
+          <Sliders size={16} />
         </button>
       </span>
     </div>
@@ -95,30 +94,31 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="min-h-dvh bg-backdrop lg:flex lg:items-center lg:justify-center lg:gap-14 lg:px-10 lg:py-10">
+      <div className="min-h-dvh bg-backdrop lg:flex lg:items-center lg:justify-center lg:gap-16 lg:px-10 lg:py-10">
         <aside className="hidden w-[340px] shrink-0 lg:block">
-          <p className="text-[15px] font-semibold tracking-tight">Plainly</p>
-          <h1 className="mt-3 text-[28px] font-semibold leading-[1.15] tracking-tight text-balance">
-            Prediction markets that explain themselves.
-          </h1>
-          <p className="mt-3 text-[15px] leading-relaxed text-ink-2">
-            Follow one live hockey game from discovery to cash-out. Every price comes
-            in plain words, and you can see why it moved. All money here is pretend.
+          <p className="text-subhead font-semibold">Plainly</p>
+          <h1 className="mt-2 text-title1 font-semibold text-balance">Prediction markets that explain themselves</h1>
+          <p className="mt-3 text-callout text-ink-2">
+            Follow one live hockey game from discovery to cash-out. Every price comes in plain words,
+            and you can see why it moved. All money here is pretend.
           </p>
           <Link
             href="/about"
-            className="mt-4 inline-flex items-center gap-1 text-[15px] font-medium text-ink underline decoration-line decoration-2 underline-offset-4 hover:decoration-ink"
+            className="mt-2 inline-flex min-h-11 items-center text-callout font-semibold text-ink underline decoration-ink-3/50 decoration-2 underline-offset-4 hover:decoration-ink"
           >
-            Read the case study →
+            Read the case study
           </Link>
-          <div className="mt-8">
+          <div className="mt-4">
             <DemoPanel />
           </div>
+          <p className="mt-6 text-footnote text-ink-3">
+            Independent concept. Not affiliated with or endorsed by MetaMask.
+          </p>
         </aside>
 
-        <div
-          className="relative flex h-dvh w-full flex-col overflow-hidden bg-bg pt-safe lg:h-[844px] lg:pt-0 lg:max-h-[calc(100dvh-80px)] lg:w-[390px] lg:shrink-0 lg:rounded-[44px] lg:border lg:border-line lg:shadow-float"
-        >
+        {/* The phone. On desktop it draws its own status bar and home indicator; on a phone it's full screen. */}
+        <div className="relative flex h-dvh w-full flex-col overflow-hidden bg-bg pt-safe lg:h-[844px] lg:max-h-[calc(100dvh-80px)] lg:w-[390px] lg:shrink-0 lg:rounded-[54px] lg:shadow-float lg:outline-[10px] lg:outline-[#222326] lg:outline-solid lg:[--inset-bottom:34px] lg:[--inset-top:47px]">
+          <StatusBar />
           <DemoStrip open={panelOpen} onToggle={() => setPanelOpen((o) => !o)} />
           <AnimatePresence>
             {panelOpen && (
@@ -128,7 +128,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.18 }}
-                className="absolute inset-x-3 top-11 z-40 rounded-card border border-dashed border-ink-3/50 bg-backdrop p-4 shadow-float lg:hidden"
+                className="absolute inset-x-3 top-[calc(var(--inset-top)+40px)] z-40 rounded-card border border-dashed border-ink-3/50 bg-backdrop p-4 shadow-float lg:hidden"
               >
                 <DemoPanel compact />
               </motion.div>
@@ -138,6 +138,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <NoticeBanner />
           <SheetHost />
           <Toaster />
+          <HomeIndicator />
         </div>
       </div>
     </MotionConfig>

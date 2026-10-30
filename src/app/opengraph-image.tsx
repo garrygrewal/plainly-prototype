@@ -25,8 +25,8 @@ export default function OpengraphImage() {
           width: "100%",
           height: "100%",
           display: "flex",
-          background: "#f6f4ef",
-          color: "#15171a",
+          background: "#131416",
+          color: "#ffffff",
           padding: "72px 80px",
           fontFamily: "sans-serif",
         }}
@@ -44,10 +44,10 @@ export default function OpengraphImage() {
           >
             Prediction markets that explain themselves.
           </div>
-          <div style={{ marginTop: 28, fontSize: 26, color: "#4a4d52", lineHeight: 1.35 }}>
+          <div style={{ marginTop: 28, fontSize: 26, color: "#a9aaad", lineHeight: 1.35 }}>
             One live game, from discovery to cash-out. Every price in plain words.
           </div>
-          <div style={{ marginTop: "auto", fontSize: 20, color: "#65686e" }}>
+          <div style={{ marginTop: "auto", fontSize: 20, color: "#8b8c91" }}>
             Concept prototype · demo money
           </div>
         </div>
@@ -58,28 +58,27 @@ export default function OpengraphImage() {
             width: 500,
             display: "flex",
             flexDirection: "column",
-            background: "#ffffff",
+            background: "#1c1d1f",
             borderRadius: 36,
-            border: "1px solid #e3dfd6",
             padding: "36px 30px 30px",
-            boxShadow: "0 30px 80px rgba(21,23,26,0.12)",
+            boxShadow: "0 30px 80px rgba(0,0,0,0.5)",
           }}
         >
-          <div style={{ fontSize: 22, color: "#4a4d52" }}>Chance the Gulls win</div>
+          <div style={{ fontSize: 22, color: "#a9aaad" }}>Chance the Gulls win</div>
           <div style={{ display: "flex", alignItems: "flex-end", marginTop: 4 }}>
             <div style={{ fontSize: 110, fontWeight: 700, letterSpacing: -5, lineHeight: 1 }}>71</div>
             <div style={{ fontSize: 56, fontWeight: 700, marginBottom: 10 }}>%</div>
           </div>
           <div style={{ marginTop: 14, fontSize: 24, lineHeight: 1.3, display: "flex" }}>
             <span style={{ fontWeight: 700, marginRight: 8 }}>Likely.</span>
-            <span style={{ color: "#4a4d52" }}>About 3 times in 4.</span>
+            <span style={{ color: "#a9aaad" }}>About 3 times in 4.</span>
           </div>
           <svg width={w} height={h} style={{ marginTop: 26 }} viewBox={`0 0 ${w} ${h}`}>
-            <line x1="0" x2={w} y1={h / 2} y2={h / 2} stroke="#e3dfd6" strokeWidth="2" />
-            <path d={d} fill="none" stroke="#2f5bea" strokeWidth="5" strokeLinejoin="round" strokeLinecap="round" />
-            <circle cx={(5 / (PATH.length - 1)) * w} cy={(1 - 0.71) * h} r="9" fill="#2f5bea" />
-            <circle cx={(16 / (PATH.length - 1)) * w} cy={(1 - 0.23) * h} r="9" fill="#b9521c" />
-            <circle cx={(22 / (PATH.length - 1)) * w} cy={(1 - 0.84) * h} r="9" fill="#2f5bea" />
+            <line x1="0" x2={w} y1={h / 2} y2={h / 2} stroke="#27282a" strokeWidth="2" />
+            <path d={d} fill="none" stroke="#ffffff" strokeWidth="5" strokeLinejoin="round" strokeLinecap="round" />
+            <circle cx={(5 / (PATH.length - 1)) * w} cy={(1 - 0.71) * h} r="9" fill="#c6f26e" />
+            <circle cx={(16 / (PATH.length - 1)) * w} cy={(1 - 0.23) * h} r="9" fill="#ff8a9c" />
+            <circle cx={(22 / (PATH.length - 1)) * w} cy={(1 - 0.84) * h} r="9" fill="#c6f26e" />
           </svg>
         </div>
       </div>

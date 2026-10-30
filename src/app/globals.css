@@ -183,11 +183,19 @@ body {
   }
 }
 
+/*
+ * Safe areas as variables: real phones use env(); the desktop phone frame
+ * overrides them to leave room for its drawn status bar and home indicator.
+ */
+:root {
+  --inset-top: env(safe-area-inset-top, 0px);
+  --inset-bottom: env(safe-area-inset-bottom, 0px);
+}
 @utility pt-safe {
-  padding-top: env(safe-area-inset-top);
+  padding-top: var(--inset-top);
 }
 @utility pb-safe {
-  padding-bottom: env(safe-area-inset-bottom);
+  padding-bottom: var(--inset-bottom);
 }
 
 /* Scrollbars inside the phone frame stay out of the way. */

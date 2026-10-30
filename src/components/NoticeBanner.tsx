@@ -51,7 +51,7 @@ export function NoticeBanner() {
   }
 
   return (
-    <div aria-live="polite" className="pointer-events-none absolute inset-x-2 top-2 z-40">
+    <div aria-live="polite" className="pointer-events-none absolute inset-x-2 top-[calc(var(--inset-top)+6px)] z-40">
       <AnimatePresence>
         {notice && (
           <motion.div
