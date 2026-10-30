@@ -128,7 +128,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -8 }}
                 transition={{ duration: 0.18 }}
-                className="absolute inset-x-3 top-11 z-40 rounded-3xl border border-line bg-surface p-4 shadow-float lg:hidden"
+                className="absolute inset-x-3 top-11 z-40 rounded-card border border-dashed border-ink-3/50 bg-backdrop p-4 shadow-float lg:hidden"
               >
                 <DemoPanel compact />
               </motion.div>

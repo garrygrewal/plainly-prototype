@@ -7,6 +7,31 @@ import { useDemo } from "@/lib/store";
 import { AnimatedNumber } from "./AnimatedNumber";
 import type { MarketView } from "./hooks";
 import { Arrow } from "./icons";
+import { Button } from "./ui/Button";
+import { Change } from "./ui/Pill";
+import { SectionHeader, Tile } from "./ui/Surface";
+
+/** A stat tile like the ones on a perps position: label, value, quiet sub-line. */
+function Stat({
+  label,
+  value,
+  sub,
+  small = false,
+}: {
+  label: string;
+  value: React.ReactNode;
+  sub?: React.ReactNode;
+  /** For three-across rows, where title-size numbers won't fit. */
+  small?: boolean;
+}) {
+  return (
+    <Tile className="min-w-0">
+      <dt className="text-footnote text-ink-2">{label}</dt>
+      <dd className={`num mt-0.5 truncate font-semibold ${small ? "text-body" : "text-title3"}`}>{value}</dd>
+      {sub && <dd className="num truncate text-footnote text-ink-3">{sub}</dd>}
+    </Tile>
+  );
+}
 
 /** The user's live position: what it's worth, what they'd get, and the way out. */
 export function PositionCard({ view }: { view: MarketView }) {
@@ -16,85 +41,68 @@ export function PositionCard({ view }: { view: MarketView }) {
   if (!position) return null;
 
   const h = position.holdings;
-  const lines = (["yes", "no"] as const)
+  const held = (["yes", "no"] as const)
     .filter((s) => h[s] > 0)
-    .map((s) => `${shares(h[s])} ${s === "yes" ? "Yes" : "No"} shares · ${s === "yes" ? m.yesLabel : m.noLabel}`);
-  const up = position.pnl >= 0;
+    .map((s) => `${shares(h[s])} ${s === "yes" ? "Yes" : "No"} shares · ${s === "yes" ? m.yesLabel : m.noLabel}`)
+    .join(", ");
   const ended = m.kind === "live" && sim ? ifEndedNow(m, sim.game, h) : null;
 
   return (
     <motion.section
-      aria-label="Your position"
-      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16, scale: 0.98 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8, scale: 0.98 }}
+      aria-labelledby="pos-title"
+      initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={reduce ? { opacity: 0 } : { opacity: 0, y: -8 }}
       transition={{ type: "spring", stiffness: 320, damping: 30 }}
-      className="rounded-3xl border border-line bg-surface p-5 shadow-card"
+      className="space-y-3"
     >
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h2 className="text-[15px] font-semibold tracking-tight">Your position</h2>
-          {lines.map((l) => (
-            <p key={l} className="num text-sm text-ink-2">
-              {l}
-            </p>
-          ))}
-        </div>
-        <span className="rounded-full bg-surface-2 px-2.5 py-1 text-xs text-ink-2">Demo money</span>
+      <div>
+        <SectionHeader id="pos-title">Your position</SectionHeader>
+        <p className="num text-footnote text-ink-2">{held}</p>
       </div>
 
-      <div className="mt-4 flex items-end justify-between gap-3">
-        <div>
-          <p className="text-xs text-ink-3">Worth now</p>
-          <AnimatedNumber value={position.worthNow} format={usd} className="text-[32px] font-semibold leading-tight tracking-tight" />
-        </div>
-        <p className="num mb-1 flex items-center gap-1 text-sm">
-          <Arrow up={up} />
-          <AnimatedNumber value={position.pnl} format={signedUsd} className="font-medium" />
-          <span className="text-ink-2">({signedPct(position.pnlPct)})</span>
-        </p>
-      </div>
-      <p className="num text-xs text-ink-3">You paid {usd(position.cost)}</p>
-
-      <dl className="mt-4 space-y-3 border-t border-line pt-4 text-sm">
+      <dl className="grid grid-cols-2 gap-2">
+        <Stat
+          label="Worth now"
+          value={<AnimatedNumber value={position.worthNow} format={usd} />}
+          sub={`You paid ${usd(position.cost)}`}
+        />
+        <Stat
+          label="P&L"
+          value={
+            <Change value={position.pnl} className="inline-flex items-center gap-1">
+              <Arrow up={position.pnl >= 0} />
+              <AnimatedNumber value={position.pnl} format={signedUsd} />
+            </Change>
+          }
+          sub={signedPct(position.pnlPct)}
+        />
         {ended ? (
-          <div className="flex items-start justify-between gap-3">
-            <dt className="text-ink-2">
-              If it ended now
-              <span className="block text-xs text-ink-3">{ended.line}</span>
-            </dt>
-            <dd className="num text-right font-medium">
-              {ended.payout === null ? "Not settled yet" : `You’d get ${usd(ended.payout)}`}
-            </dd>
-          </div>
+          <Stat
+            label="If it ended now"
+            value={ended.payout === null ? "Overtime" : usd(ended.payout)}
+            sub={ended.payout === null ? ended.line.replace(", so it would go to overtime.", "") : ended.line}
+          />
         ) : (
-          <div className="flex items-start justify-between gap-3">
-            <dt className="text-ink-2">If it settles</dt>
-            <dd className="num text-right font-medium">
-              Yes: {usd(position.payoutIfYes)} · No: {usd(position.payoutIfNo)}
-            </dd>
-          </div>
+          <Stat
+            label="If it settles Yes"
+            value={usd(position.payoutIfYes)}
+            sub={`If No: ${usd(position.payoutIfNo)}`}
+          />
         )}
-        <div className="flex items-start justify-between gap-3">
-          <dt className="text-ink-2">Most you can still lose</dt>
-          <dd className="num text-right font-medium">{usd(position.cost)}</dd>
-        </div>
+        <Stat label="Most you can lose" value={usd(position.cost)} sub="What you put in" />
       </dl>
 
       {status !== "final" && (
-        <div className="mt-4 flex items-center justify-between gap-3 rounded-2xl bg-surface-2 p-3 pl-4">
-          <p className="text-sm">
-            <span className="block text-ink-2">Cash out now</span>
-            <AnimatedNumber value={position.cashOut} format={usd} className="text-[17px] font-semibold" />
+        <Tile className="flex items-center justify-between gap-3">
+          <p>
+            <span className="block text-footnote text-ink-2">Cash out now</span>
+            <AnimatedNumber value={position.cashOut} format={usd} className="text-body font-semibold" />
           </p>
-          <button
-            type="button"
-            onClick={() => open({ kind: "cashout", marketId: m.id })}
-            className="h-11 rounded-xl bg-ink px-4 text-[15px] font-semibold text-bg active:scale-[0.98]"
-          >
-            Cash out…
-          </button>
-        </div>
+          <Button variant="secondary" size="md" onClick={() => open({ kind: "cashout", marketId: m.id })}>
+            Cash out
+          </Button>
+        </Tile>
       )}
     </motion.section>
   );
@@ -106,26 +114,21 @@ export function ResultCard({ view }: { view: MarketView }) {
   const r = realized(ledger, view.m.id);
   if (!r.any || view.position) return null;
   return (
-    <section aria-label="Your result" className="rounded-3xl border border-line bg-surface p-5">
-      <h2 className="text-[15px] font-semibold tracking-tight">
-        {r.settled ? "Your result" : "You cashed out"}
-      </h2>
-      <dl className="mt-3 grid grid-cols-3 gap-3 text-sm">
-        <div>
-          <dt className="text-xs text-ink-3">Put in</dt>
-          <dd className="num font-medium">{usd(r.paid)}</dd>
-        </div>
-        <div>
-          <dt className="text-xs text-ink-3">Got back</dt>
-          <dd className="num font-medium">{usd(r.got)}</dd>
-        </div>
-        <div>
-          <dt className="text-xs text-ink-3">{r.pnl >= 0 ? "Gain" : "Loss"}</dt>
-          <dd className="num flex items-center gap-1 font-medium">
-            <Arrow up={r.pnl >= 0} />
-            {signedUsd(r.pnl)}
-          </dd>
-        </div>
+    <section aria-labelledby="result-title" className="space-y-3">
+      <SectionHeader id="result-title">{r.settled ? "Your result" : "You cashed out"}</SectionHeader>
+      <dl className="grid grid-cols-3 gap-2">
+        <Stat small label="Put in" value={usd(r.paid)} />
+        <Stat small label="Got back" value={usd(r.got)} />
+        <Stat
+          small
+          label={r.pnl >= 0 ? "Gain" : "Loss"}
+          value={
+            <Change value={r.pnl} className="inline-flex items-center gap-1">
+              <Arrow up={r.pnl >= 0} />
+              {signedUsd(r.pnl)}
+            </Change>
+          }
+        />
       </dl>
     </section>
   );

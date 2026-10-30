@@ -2,19 +2,29 @@
 
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { getMarket } from "@/lib/data/markets";
 import type { LiveMarket } from "@/lib/data/types";
 import { markerEvents } from "@/lib/selectors";
 import { useDemo } from "@/lib/store";
-import { Bell, Close } from "./icons";
 
 const SHOW_FOR_MS = 7000;
 
+/** A neutral app icon: a dark tile with a rising line. No host-app branding. */
+function AppIcon() {
+  return (
+    <svg width="38" height="38" viewBox="0 0 64 64" aria-hidden className="shrink-0 rounded-[9px]">
+      <rect width="64" height="64" fill="#15171a" />
+      <path d="M12 40 L22 37 L28 24 L36 30 L42 18 L52 22" fill="none" stroke="#86a2ff" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="52" cy="22" r="4.5" fill="#f6f4ef" />
+    </svg>
+  );
+}
+
 /**
- * The come-back moment: a notification-style card when something big
- * happens in a game you hold or follow. Tapping it opens the market at
- * the moment that moved it.
+ * The come-back moment, as an iOS notification: when something big happens
+ * in a game you hold or follow. Tap to open the market at that moment;
+ * swipe up (or wait) to dismiss.
  */
 export function NoticeBanner() {
   const notice = useDemo((s) => s.notice);
@@ -22,6 +32,7 @@ export function NoticeBanner() {
   const router = useRouter();
   const pathname = usePathname();
   const reduce = useReducedMotion();
+  const dragged = useRef(false);
 
   useEffect(() => {
     if (!notice) return;
@@ -30,7 +41,7 @@ export function NoticeBanner() {
   }, [notice, dismiss]);
 
   function open() {
-    if (!notice) return;
+    if (!notice || dragged.current) return;
     const m = getMarket(notice.marketId) as LiveMarket;
     const at = markerEvents(m, useDemo.getState().sims[m.id].fired).length;
     useDemo.setState({ focusEvent: { marketId: m.id, eventId: notice.eventId, at } });
@@ -40,40 +51,43 @@ export function NoticeBanner() {
   }
 
   return (
-    <div aria-live="polite" className="pointer-events-none absolute inset-x-3 top-11 z-40">
+    <div aria-live="polite" className="pointer-events-none absolute inset-x-2 top-2 z-40">
       <AnimatePresence>
         {notice && (
           <motion.div
             key={notice.id}
-            initial={reduce ? { opacity: 0 } : { opacity: 0, y: -24, scale: 0.98 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -16 }}
-            transition={{ type: "spring", stiffness: 380, damping: 32 }}
-            className="pointer-events-auto flex items-start gap-3 rounded-[22px] border border-line bg-surface/95 p-3 pr-2 shadow-float backdrop-blur"
+            drag={reduce ? false : "y"}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0.7, bottom: 0.1 }}
+            onDragStart={() => (dragged.current = true)}
+            onDragEnd={(_, info) => {
+              if (info.offset.y < -24 || info.velocity.y < -300) dismiss();
+              // Let the click that ends a drag pass without opening the market.
+              setTimeout(() => (dragged.current = false), 0);
+            }}
+            initial={reduce ? { opacity: 0 } : { opacity: 0, y: -80 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={reduce ? { opacity: 0 } : { opacity: 0, y: -80 }}
+            transition={{ type: "spring", stiffness: 380, damping: 34 }}
+            className="pointer-events-auto relative touch-none rounded-[22px] bg-material shadow-float backdrop-blur-xl"
           >
-            <button
-              type="button"
-              onClick={open}
-              className="flex min-w-0 flex-1 items-start gap-3 rounded-2xl text-left"
-            >
-              <span className="mt-0.5 grid size-9 shrink-0 place-items-center rounded-xl bg-ink text-bg">
-                <Bell width={18} height={18} />
-              </span>
-              <span className="min-w-0">
-                <span className="block text-[11px] text-ink-3">Plainly · now</span>
-                <span className="block text-[15px] font-semibold leading-snug">
-                  {notice.title}
+            <button type="button" onClick={open} className="flex w-full items-start gap-3 p-3.5 text-left">
+              <AppIcon />
+              <span className="min-w-0 flex-1">
+                <span className="flex items-baseline justify-between gap-2">
+                  <span className="truncate text-subhead font-semibold">{notice.title}</span>
+                  <span className="shrink-0 text-footnote text-ink-3">now</span>
                 </span>
-                <span className="block text-sm leading-snug text-ink-2">{notice.body}</span>
+                <span className="line-clamp-2 text-subhead text-ink">{notice.body}</span>
               </span>
             </button>
+            {/* Swipe is the gesture; this is the same action for keyboard and VoiceOver. */}
             <button
               type="button"
               onClick={dismiss}
-              aria-label="Dismiss notification"
-              className="grid size-8 shrink-0 place-items-center rounded-full text-ink-3 hover:bg-surface-2 hover:text-ink"
+              className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:right-2 focus:rounded-full focus:bg-surface-2 focus:px-3 focus:py-1 focus:text-footnote"
             >
-              <Close width={16} height={16} />
+              Dismiss
             </button>
           </motion.div>
         )}
