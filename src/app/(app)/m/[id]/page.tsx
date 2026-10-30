@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { Screen, TopBar } from "@/components/bits";
+import { Screen } from "@/components/bits";
+import { NavBar } from "@/components/ui/NavBar";
 import { MarketDetail } from "@/components/MarketDetail";
 import { MARKETS, getMarket } from "@/lib/data/markets";
 
@@ -25,7 +26,7 @@ export default function MarketPage(props: PageProps<"/m/[id]">) {
     <Suspense
       fallback={
         <Screen>
-          <TopBar back />
+          <NavBar back={{ href: "/", label: "Predictions" }} />
         </Screen>
       }
     >
