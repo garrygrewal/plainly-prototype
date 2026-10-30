@@ -18,7 +18,8 @@ function detentHeight(d: Detent, frame: number) {
  * - Detents: opens at the first one; drag the grabber between them, or
  *   below the smallest to dismiss. The grabber is also a button for
  *   keyboard and VoiceOver users.
- * - A pinned footer keeps the main action visible at every detent.
+ * - Content ends with a <SheetFooter> to keep the main action visible at
+ *   every detent, or with <SheetEnd> for bottom padding.
  * - Escape or the scrim closes it; focus stays inside while it's open.
  */
 export function Sheet({
@@ -26,14 +27,12 @@ export function Sheet({
   onClose,
   labelledBy,
   detents = ["large"],
-  footer,
   children,
 }: {
   open: boolean;
   onClose: () => void;
   labelledBy: string;
   detents?: Detent[];
-  footer?: React.ReactNode;
   children: React.ReactNode;
 }) {
   const reduce = useReducedMotion();
@@ -148,7 +147,8 @@ export function Sheet({
             transition={{ duration: 0.2 }}
           />
           <motion.div
-            key="sheet"
+            // A different set of detents is a different sheet: remount so it starts at its own first detent.
+            key={`sheet-${detents.join("-")}`}
             ref={attach}
             role="dialog"
             aria-modal="true"
@@ -187,15 +187,26 @@ export function Sheet({
             >
               <Close size={16} strokeWidth={2.6} />
             </button>
-            <div className="no-scrollbar min-h-0 flex-1 overflow-y-auto overscroll-contain px-4 pt-2 pb-4">
+            <div className="no-scrollbar flex min-h-0 flex-1 flex-col overflow-y-auto overscroll-contain px-4 pt-2">
               {children}
             </div>
-            {footer && (
-              <div className="shrink-0 px-4 pt-2 pb-[max(16px,env(safe-area-inset-bottom))]">{footer}</div>
-            )}
           </motion.div>
         </>
       )}
     </AnimatePresence>
   );
+}
+
+/** Pinned to the bottom of the sheet while the content above scrolls. */
+export function SheetFooter({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="sticky bottom-0 -mx-4 mt-auto bg-sheet px-4 pt-4 pb-[max(16px,env(safe-area-inset-bottom))]">
+      {children}
+    </div>
+  );
+}
+
+/** Bottom padding for sheets without a footer. */
+export function SheetEnd() {
+  return <div aria-hidden className="h-6 shrink-0" />;
 }

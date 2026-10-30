@@ -1,12 +1,17 @@
 "use client";
 
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { useState } from "react";
 import { cents, shares, signedUsd, usd } from "@/lib/format";
 import { quoteSell } from "@/lib/market/lmsr";
 import { useDemo } from "@/lib/store";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { useMarketView } from "./hooks";
+import { DoneMark } from "./TradeSheet";
+import { Button } from "./ui/Button";
+import { KeyValueList, KeyValueRow } from "./ui/KeyValueRow";
+import { Change } from "./ui/Pill";
+import { SheetEnd, SheetFooter } from "./ui/Sheet";
 
 /**
  * Cash out, explained: what you'd get now, why it's a bit less than
@@ -25,41 +30,46 @@ export function CashOutSheet({
   const { m, lmsr, pYes, position, status } = useMarketView(marketId);
   const cashOut = useDemo((s) => s.cashOut);
   const [done, setDone] = useState<{ proceeds: number; cost: number } | null>(null);
+  const [whyLess, setWhyLess] = useState(false);
 
   if (done) {
     const pnl = done.proceeds - done.cost;
     return (
       <motion.div
-        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 20 }}
+        initial={reduce ? { opacity: 0 } : { opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 300, damping: 28 }}
-        className="pt-2 text-center"
+        className="flex flex-1 flex-col"
       >
-        <h2 id={titleId} data-autofocus tabIndex={-1} className="mt-2 text-[24px] font-semibold tracking-tight outline-none">
-          Done. {usd(done.proceeds)} is back in your balance.
-        </h2>
-        <p className="num mt-2 text-[15px] text-ink-2">
-          You put in {usd(done.cost)}, so that’s {signedUsd(pnl)} on this market.
-        </p>
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-6 h-14 w-full rounded-2xl bg-ink text-[17px] font-semibold text-bg"
-        >
-          Done
-        </button>
+        <div className="flex flex-col items-center pt-4 text-center">
+          <DoneMark tone="neutral" />
+          <h2 id={titleId} data-autofocus tabIndex={-1} className="mt-4 text-title2 font-semibold outline-none">
+            {usd(done.proceeds)} is back in your balance
+          </h2>
+        </div>
+        <KeyValueList className="mt-6">
+          <KeyValueRow label="You put in" value={usd(done.cost)} />
+          <KeyValueRow label="You got back" value={usd(done.proceeds)} />
+          <KeyValueRow label={pnl >= 0 ? "Gain" : "Loss"} value={<Change value={pnl}>{signedUsd(pnl)}</Change>} />
+        </KeyValueList>
+        <SheetFooter>
+          <Button full onClick={onClose}>
+            Done
+          </Button>
+        </SheetFooter>
       </motion.div>
     );
   }
 
   if (!position || status === "final") {
     return (
-      <div className="pt-2">
-        <h2 id={titleId} data-autofocus tabIndex={-1} className="text-[22px] font-semibold outline-none">
+      <>
+        <h2 id={titleId} data-autofocus tabIndex={-1} className="pr-12 text-title2 font-semibold outline-none">
           Nothing to cash out
         </h2>
-        <p className="mt-2 text-ink-2">This market has settled, or you don’t hold any shares in it.</p>
-      </div>
+        <p className="mt-2 text-body text-ink-2">This market has settled, or you don’t hold any shares in it.</p>
+        <SheetEnd />
+      </>
     );
   }
 
@@ -71,6 +81,7 @@ export function CashOutSheet({
   const other = side === "yes" ? m.noLabel : m.yesLabel;
   const hold = side === "yes" ? position.payoutIfYes : position.payoutIfNo;
   const holdOther = side === "yes" ? position.payoutIfNo : position.payoutIfYes;
+  const now = position.cashOut - position.cost;
 
   function confirm() {
     const cost = position!.cost;
@@ -79,65 +90,55 @@ export function CashOutSheet({
   }
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
-      <motion.div key="form" exit={{ opacity: 0 }}>
-        <h2 id={titleId} data-autofocus tabIndex={-1} className="pr-10 text-[22px] font-semibold tracking-tight outline-none">
-          Cash out your position?
-        </h2>
-        <p className="mt-3 text-[17px] leading-snug">
-          You’d get{" "}
-          <strong className="font-semibold">
-            <AnimatedNumber value={position.cashOut} format={usd} />
-          </strong>{" "}
-          right now.
-        </p>
-        <p className="mt-2 text-sm leading-relaxed text-ink-2">
-          You’d sell {shares(h[side])} shares at an average of {cents(q.avgPrice, 1)}. The
-          price is {cents(priceNow, 1)} right now, but selling everything at once
-          pushes it down a little, so you get slightly less than “worth now”.
-        </p>
+    <div className="flex flex-1 flex-col">
+      <h2 id={titleId} data-autofocus tabIndex={-1} className="pr-12 text-title2 font-semibold outline-none">
+        Cash out?
+      </h2>
+      <p className="num mt-0.5 text-subhead text-ink-2">
+        Sell {shares(h[side])} {side === "yes" ? "Yes" : "No"} shares · {label}
+      </p>
 
-        <dl className="mt-5 space-y-2.5 rounded-3xl bg-surface-2 p-4 text-sm">
-          <Choice
-            term="Cash out now"
-            value={usd(position.cashOut)}
-            delta={position.cashOut - position.cost}
-          />
-          <Choice term={`Hold, and it’s “${label}”`} value={usd(hold)} delta={hold - position.cost} />
-          <Choice term={`Hold, and it’s “${other}”`} value={usd(holdOther)} delta={holdOther - position.cost} />
-        </dl>
-        <p className="mt-3 text-[13px] leading-relaxed text-ink-3">
-          Neither choice is wrong. Cashing out locks in what you have now. Holding
-          keeps your chance at the full payout, and the risk of getting nothing.
-        </p>
+      <p className="mt-5 text-footnote text-ink-2">You’d get</p>
+      <AnimatedNumber value={position.cashOut} format={usd} className="block text-display font-semibold" />
+      <p className="num text-subhead">
+        <Change value={now}>{signedUsd(now)}</Change> <span className="text-ink-2">on the {usd(position.cost)} you put in</span>
+      </p>
 
-        <button
-          type="button"
-          onClick={confirm}
-          className="mt-5 h-14 w-full rounded-2xl bg-ink text-[17px] font-semibold text-bg active:scale-[0.99]"
-        >
+      <KeyValueList className="mt-4">
+        <KeyValueRow
+          label="Average sale price"
+          value={cents(q.avgPrice, 1)}
+          sub={`Price now ${cents(priceNow, 1)}`}
+          onInfo={() => setWhyLess((v) => !v)}
+          infoExpanded={whyLess}
+          infoLabel="Why is it less than the price now?"
+          explanation="Selling everything at once pushes the price down a little as you go, so you get slightly less than shares × today’s price."
+        />
+        <KeyValueRow label="Cash out now" value={<Pair value={position.cashOut} delta={now} />} />
+        <KeyValueRow label={`Hold: if “${label}”`} value={<Pair value={hold} delta={hold - position.cost} />} />
+        <KeyValueRow label={`Hold: if “${other}”`} value={<Pair value={holdOther} delta={holdOther - position.cost} />} />
+      </KeyValueList>
+      <p className="mt-3 text-footnote text-ink-3">
+        Neither choice is wrong. Cashing out locks in what you have now. Holding keeps your chance at
+        the full payout, and the risk of getting nothing.
+      </p>
+
+      <SheetFooter>
+        <Button full onClick={confirm}>
           Cash out {usd(position.cashOut)}
-        </button>
-        <button
-          type="button"
-          onClick={onClose}
-          className="mt-2 h-12 w-full rounded-2xl text-[15px] font-medium text-ink-2 hover:bg-surface-2"
-        >
+        </Button>
+        <Button full variant="plain" size="md" className="mt-1" onClick={onClose}>
           Keep my position
-        </button>
-      </motion.div>
-    </AnimatePresence>
+        </Button>
+      </SheetFooter>
+    </div>
   );
 }
 
-function Choice({ term, value, delta }: { term: string; value: string; delta: number }) {
+function Pair({ value, delta }: { value: number; delta: number }) {
   return (
-    <div className="flex items-center justify-between gap-3">
-      <dt className="text-ink-2">{term}</dt>
-      <dd className="num text-right">
-        <span className="font-medium">{value}</span>{" "}
-        <span className="text-ink-3">({signedUsd(delta)})</span>
-      </dd>
-    </div>
+    <>
+      {usd(value)} <Change value={delta} className="text-footnote">({signedUsd(delta)})</Change>
+    </>
   );
 }

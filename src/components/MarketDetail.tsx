@@ -29,7 +29,7 @@ import { Button } from "./ui/Button";
 import { KeyValueList, KeyValueRow } from "./ui/KeyValueRow";
 import { NavBar } from "./ui/NavBar";
 import { Change } from "./ui/Pill";
-import { type Detent, Sheet } from "./ui/Sheet";
+import { type Detent, Sheet, SheetEnd } from "./ui/Sheet";
 import { Card, SectionHeader, Tile } from "./ui/Surface";
 
 type Topic = "chance" | "share" | "liquidity" | "how" | "settles";
@@ -98,6 +98,7 @@ export function MarketDetail({ id }: { id: string }) {
 
       <Sheet open={!!topic} onClose={() => setTopic(null)} labelledBy={infoTitle} detents={INFO_DETENTS}>
         {topic && <Explainer topic={topic} view={view} titleId={infoTitle} />}
+        <SheetEnd />
       </Sheet>
     </Screen>
   );
