@@ -12,6 +12,7 @@ import { useDemo } from "@/lib/store";
 import { DemoPanel } from "./DemoPanel";
 import { NoticeBanner } from "./NoticeBanner";
 import { SheetHost } from "./SheetHost";
+import { Toaster } from "./ui/Toast";
 import { Pause, Play, Sliders } from "./icons";
 
 const hero = getMarket(HERO_ID) as LiveMarket;
@@ -116,7 +117,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </aside>
 
         <div
-          className="relative flex h-dvh w-full flex-col overflow-hidden bg-bg lg:h-[844px] lg:max-h-[calc(100dvh-80px)] lg:w-[390px] lg:shrink-0 lg:rounded-[44px] lg:border lg:border-line lg:shadow-float"
+          className="relative flex h-dvh w-full flex-col overflow-hidden bg-bg pt-safe lg:h-[844px] lg:pt-0 lg:max-h-[calc(100dvh-80px)] lg:w-[390px] lg:shrink-0 lg:rounded-[44px] lg:border lg:border-line lg:shadow-float"
         >
           <DemoStrip open={panelOpen} onToggle={() => setPanelOpen((o) => !o)} />
           <AnimatePresence>
@@ -136,6 +137,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <div className="relative min-h-0 flex-1">{children}</div>
           <NoticeBanner />
           <SheetHost />
+          <Toaster />
         </div>
       </div>
     </MotionConfig>

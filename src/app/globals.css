@@ -1,71 +1,74 @@
 @import "tailwindcss";
 
 /*
- * Plainly design tokens.
- * One typeface, a warm paper/ink neutral, and two outcome colours chosen to
- * stay distinct for colour-blind viewers (blue = Yes, burnt orange = No).
- * Outcome colours are always paired with a text label.
+ * Design tokens, matched to the host app's mobile visual language.
+ * Dark is the default; light is opt-in from the theme toggle.
+ * Fills carry hierarchy (no borders on cards). Outcome colours are tinted
+ * pills, always with a text label, never colour alone.
+ *
+ * Dark values are sampled from reference screenshots; positive/negative
+ * are nudged so they pass WCAG AA as small text.
  */
 :root {
-  --bg: #f6f4ef;
-  --backdrop: #e9e6de;
-  --surface: #ffffff;
-  --surface-2: #efece6;
-  --ink: #15171a;
-  --ink-2: #4a4d52;
-  --ink-3: #65686e;
-  --line: #e3dfd6;
-  --yes: #2f5bea;
-  --yes-soft: #e7edfd;
-  --no: #b9521c;
-  --no-soft: #f8eadf;
-  --live: #c8364d;
-  --scrim: rgb(21 23 26 / 0.32);
-  --shadow: 0 1px 2px rgb(21 23 26 / 0.06), 0 8px 24px rgb(21 23 26 / 0.06);
-  --shadow-lg: 0 2px 4px rgb(21 23 26 / 0.06), 0 30px 80px rgb(21 23 26 / 0.16);
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --bg: #0f1012;
-    --backdrop: #08090a;
-    --surface: #18191c;
-    --surface-2: #222327;
-    --ink: #eceae4;
-    --ink-2: #b5b3ad;
-    --ink-3: #8f8e89;
-    --line: #2c2d31;
-    --yes: #86a2ff;
-    --yes-soft: #1c2440;
-    --no: #f0915c;
-    --no-soft: #3a241a;
-    --live: #ff6f86;
-    --scrim: rgb(0 0 0 / 0.55);
-    --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
-    --shadow-lg: 0 30px 80px rgb(0 0 0 / 0.6);
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme="dark"] {
-  --bg: #0f1012;
-  --backdrop: #08090a;
-  --surface: #18191c;
-  --surface-2: #222327;
-  --ink: #eceae4;
-  --ink-2: #b5b3ad;
-  --ink-3: #8f8e89;
-  --line: #2c2d31;
-  --yes: #86a2ff;
-  --yes-soft: #1c2440;
-  --no: #f0915c;
-  --no-soft: #3a241a;
-  --live: #ff6f86;
-  --scrim: rgb(0 0 0 / 0.55);
-  --shadow: 0 1px 2px rgb(0 0 0 / 0.4);
-  --shadow-lg: 0 30px 80px rgb(0 0 0 / 0.6);
+  --bg: #131416;
+  --backdrop: #0b0b0c;
+  /* Cards, stat tiles and sheets. */
+  --surface: #1c1d1f;
+  /* Secondary buttons and anything nested inside a card. */
+  --surface-2: #252628;
+  --badge: #3a3a3c;
+  --line: #27282a;
+  --ink: #ffffff;
+  --ink-2: #a9aaad;
+  --ink-3: #8b8c91;
+  --primary: #ffffff;
+  --on-primary: #131416;
+  --positive: #c6f26e;
+  --negative: #ff8a9c;
+  /* Yes/No: --yes/--no are the label colours, *-soft the pill fills. */
+  --yes: #c6f26e;
+  --yes-soft: #353d26;
+  --no: #ff8a9c;
+  --no-soft: #3f2730;
+  --accent: #5064ec;
+  --on-accent: #ffffff;
+  --live: #ff5c6c;
+  /* Sheets sit one step above the page; their nested rows one step above that. */
+  --sheet: #1c1d1f;
+  --sheet-fill: #252628;
+  --scrim: rgb(0 0 0 / 0.5);
+  --material: rgb(28 29 31 / 0.82);
+  --shadow-lg: 0 24px 64px rgb(0 0 0 / 0.55);
   color-scheme: dark;
+}
+
+:root[data-theme="light"] {
+  --bg: #ffffff;
+  --backdrop: #e9e9ec;
+  --surface: #f3f3f5;
+  --surface-2: #e9e9ec;
+  --badge: #e2e2e5;
+  --line: #e4e4e7;
+  --ink: #121314;
+  --ink-2: #5f6166;
+  --ink-3: #67696f;
+  --primary: #121314;
+  --on-primary: #ffffff;
+  --positive: #2e7d18;
+  --negative: #c4314b;
+  --yes: #2e6b12;
+  --yes-soft: #e4f4cf;
+  --no: #b4233f;
+  --no-soft: #fbe4e8;
+  --accent: #4559e8;
+  --on-accent: #ffffff;
+  --live: #c81e35;
+  --sheet: #ffffff;
+  --sheet-fill: #f3f3f5;
+  --scrim: rgb(0 0 0 / 0.32);
+  --material: rgb(243 243 245 / 0.85);
+  --shadow-lg: 0 24px 64px rgb(0 0 0 / 0.16);
+  color-scheme: light;
 }
 
 @theme inline {
@@ -73,19 +76,59 @@
   --color-backdrop: var(--backdrop);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-badge: var(--badge);
+  --color-line: var(--line);
   --color-ink: var(--ink);
   --color-ink-2: var(--ink-2);
   --color-ink-3: var(--ink-3);
-  --color-line: var(--line);
+  --color-primary: var(--primary);
+  --color-on-primary: var(--on-primary);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
   --color-yes: var(--yes);
   --color-yes-soft: var(--yes-soft);
   --color-no: var(--no);
   --color-no-soft: var(--no-soft);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
   --color-live: var(--live);
   --color-scrim: var(--scrim);
-  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
-  --shadow-card: var(--shadow);
+  --color-material: var(--material);
+  --color-sheet: var(--sheet);
+  --color-sheet-fill: var(--sheet-fill);
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
   --shadow-float: var(--shadow-lg);
+}
+
+/* iOS text styles (pt = px here). One scale, nothing smaller than 12. */
+@theme {
+  --text-display: 40px;
+  --text-display--line-height: 44px;
+  --text-display--letter-spacing: -0.02em;
+  --text-large-title: 34px;
+  --text-large-title--line-height: 41px;
+  --text-large-title--letter-spacing: -0.01em;
+  --text-title1: 28px;
+  --text-title1--line-height: 34px;
+  --text-title2: 22px;
+  --text-title2--line-height: 28px;
+  --text-title3: 20px;
+  --text-title3--line-height: 25px;
+  --text-body: 17px;
+  --text-body--line-height: 22px;
+  --text-callout: 16px;
+  --text-callout--line-height: 21px;
+  --text-subhead: 15px;
+  --text-subhead--line-height: 20px;
+  --text-footnote: 13px;
+  --text-footnote--line-height: 18px;
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+
+  --radius-card: 16px;
+  --radius-tile: 12px;
+  --radius-pill: 8px;
+  --radius-sheet: 24px;
 }
 
 html,
@@ -96,20 +139,55 @@ body {
 
 body {
   font-family: var(--font-sans);
-  font-feature-settings: "ss01";
   -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Numbers that change should never jiggle sideways. */
 .num {
   font-variant-numeric: tabular-nums;
-  letter-spacing: -0.01em;
 }
 
 :focus-visible {
-  outline: 2px solid var(--yes);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: 6px;
+  border-radius: 8px;
+}
+
+/* Grows the tappable area to at least 44×44 without changing the visual size. */
+@utility hit-area {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* iOS-style pressed feedback that works on touch, not just hover. */
+@utility pressable {
+  transition:
+    transform 120ms ease,
+    opacity 120ms ease;
+  &:active:not(:disabled) {
+    transform: scale(0.97);
+    opacity: 0.85;
+  }
+}
+
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 /* Scrollbars inside the phone frame stay out of the way. */
@@ -132,17 +210,9 @@ body {
 }
 
 /* Theme-dependent icons (unlayered, so they win over utilities). */
-:root[data-theme="dark"] .dark-hide {
+:root:not([data-theme="light"]) .dark-hide {
   display: none;
 }
-:root[data-theme="dark"] .dark-show {
+:root:not([data-theme="light"]) .dark-show {
   display: block;
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .dark-hide {
-    display: none;
-  }
-  :root:not([data-theme="light"]) .dark-show {
-    display: block;
-  }
 }
