@@ -6,8 +6,8 @@ A concept prototype. It follows one live hockey game from discovery to cash-out,
 
 ## What to look at (2 minutes)
 
-1. **Discover** (`/`): six markets with the chance in words ("Likely: 71%"), sparklines, live scores and a *Following* filter.
-2. **Market detail** (`/m/gulls-lynx`): the big number, translated ("about 3 times in 4"). Below it, a chart with tappable event markers, a liquidity line, and *How this works*.
+1. **Predictions** (`/`): six markets with the chance in words ("Likely · 71%"), tinted Yes/No buttons, live scores and a *Following* tab.
+2. **Market detail** (`/m/gulls-lynx`): the big number, translated ("about 3 times in 4"). Below it, a chart with tappable event markers, and ⓘ explainers for the chance, shares, liquidity and settlement.
 3. **Trade sheet**: pick Yes or No and an amount. The summary updates live: payout if right, most you can lose, average price, price impact.
 4. **Live position**: the game runs at 20× speed. Watch *worth now*, P&L, *if it ended now* and the cash-out value move with each goal.
 5. **Come-back card**: a notification when something big happens. Tap it to jump to the moment.
@@ -56,15 +56,18 @@ A Zustand store holds the demo clock, a ledger of your trades, payouts at settle
 | Component | Role |
 | --- | --- |
 | `AppShell` | Phone frame on desktop, full screen on mobile; drives the clock |
-| `Discover`, `MarketCard` | The feed |
-| `MarketDetail` | Probability hero, scoreboard, chart and explainer, liquidity, rules |
+| `Discover` | The Predictions feed |
+| `MarketDetail` | Probability hero, scoreboard, chart and explainer, "About this market" rows |
 | `ProbabilityChart` | Hand-rolled SVG chart; markers are real, focusable buttons |
-| `TradeSheet`, `CashOutSheet`, `BottomSheet` | Sheets with focus trap and drag-to-dismiss |
-| `PositionCard`, `NoticeBanner`, `DemoPanel` | Position, come-back moment, demo controls |
+| `TradeSheet`, `CashOutSheet` | Swap-style sheets: key-value rows, inline ⓘ, pinned primary button |
+| `PositionCard`, `NoticeBanner`, `DemoPanel` | Position tiles, iOS-style come-back notification, demo controls |
+| `ui/` | Base components: Button, Card/Tile, KeyValueRow, pills, NavBar, TabBar, Toast, and an iOS Sheet with detents |
 
 ## Design notes
 
-- **One typeface** (Geist), a warm paper/ink neutral, and two outcome colours: blue for Yes, burnt orange for No. Both are chosen to stay distinct for colour-blind viewers, and both always come with a text label.
+- **Fits the host app:** designed to sit inside MetaMask's mobile app visual language (dark filled surfaces, its type scale, tinted Yes/No pills, swap-style key-value rows), following Apple's Human Interface Guidelines. No logos or brand assets are used. Independent concept, not affiliated with or endorsed by MetaMask.
+- **One typeface** (Figtree, the closest free match with tabular figures), dark by default with a light theme. Yes and No are tinted green and red and always carry the word; gains and losses carry a sign and an arrow, so colour is never the only cue.
+- **iOS details:** 44pt touch targets, iOS text styles, safe areas, sheets with medium/large detents, a tab bar, and a drawn status bar and home indicator on the desktop frame.
 - **Motion with a job:** numbers glide to new values, the chart draws in and pulses once per event, sheets slide and drag, and confirming prints a receipt. `prefers-reduced-motion` turns all of it into simple fades.
 - **Accessibility:** keyboard reachable (chart markers included), focus trapped in sheets, a text summary under the chart, a polite live region for notifications, and contrast checked in both themes.
 - **Restraint:** most-you-can-lose is always visible. No countdowns, streaks, confetti or flashing.
