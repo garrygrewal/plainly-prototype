@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { getMarket } from "@/lib/data/markets";
+import { MARKETS, getMarket } from "@/lib/data/markets";
 import type { Market } from "@/lib/data/types";
 import { type LmsrState, priceYes } from "@/lib/market/lmsr";
 import { type LiveSim, type PricePoint, simPrice } from "@/lib/sim/engine";
@@ -52,6 +52,29 @@ export function useMarketView(id: string): MarketView {
 export function useBalance(): number {
   const ledger = useDemo((s) => s.ledger);
   return useMemo(() => balanceOf(ledger), [ledger]);
+}
+
+/** What's riding on open positions across every market: value now and P&L. */
+export function usePortfolio(): { worth: number; pnl: number; count: number } {
+  const sims = useDemo((s) => s.sims);
+  const statics = useDemo((s) => s.statics);
+  const ledger = useDemo((s) => s.ledger);
+  return useMemo(() => {
+    let worth = 0;
+    let pnl = 0;
+    let count = 0;
+    for (const m of MARKETS) {
+      const sim = m.kind === "live" ? sims[m.id] : null;
+      const lmsr = sim ? sim.lmsr : statics[m.id];
+      const pYes = sim ? simPrice(sim) : priceYes(lmsr);
+      const p = positionSummary(holdings(ledger, m.id), lmsr, pYes);
+      if (!p) continue;
+      worth += p.worthNow;
+      pnl += p.pnl;
+      count += 1;
+    }
+    return { worth, pnl, count };
+  }, [sims, statics, ledger]);
 }
 
 /** Width of an element, kept up to date. */

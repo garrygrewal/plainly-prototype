@@ -4,10 +4,13 @@ import {
   ChevronDown as LChevronDown,
   ChevronLeft as LChevronLeft,
   ChevronRight as LChevronRight,
+  CircleCheck,
   CircleDollarSign,
+  Clapperboard,
   Gift,
   House,
   Info as LInfo,
+  Landmark,
   type LucideProps,
   Moon as LMoon,
   Pause as LPause,
@@ -53,6 +56,9 @@ export const Plus = icon(LPlus);
 export const HomeIcon = icon(House);
 export const MoneyIcon = icon(CircleDollarSign);
 export const RewardsIcon = icon(Gift);
+export const FilmIcon = icon(Clapperboard);
+export const CivicIcon = icon(Landmark);
+export const Settled = icon(CircleCheck);
 
 /** Solid up/down triangle for gains and losses (paired with a sign, never colour alone). */
 export const Arrow = ({ up, ...p }: SVGProps<SVGSVGElement> & { up: boolean }) => (

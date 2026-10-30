@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Figtree } from "next/font/google";
+import { InlineScript } from "@/components/InlineScript";
 import "./globals.css";
 
 // The host app's typeface is proprietary; Figtree is the closest free match
@@ -52,7 +53,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className={figtree.variable} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <InlineScript html={themeScript} />
       </head>
       <body>{children}</body>
     </html>
