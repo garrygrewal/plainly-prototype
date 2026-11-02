@@ -6,40 +6,23 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 export const metadata: Metadata = {
   title: "About this concept",
   description:
-    "Why Plainly looks the way it does: the problem, four design principles, the key decisions, and what I'd test next.",
+    "Why Plainly looks the way it does: the problem, three design principles, the key decisions, and what I'd test next.",
 };
 
-/**
- * Case study. Every block marked <Todo> is placeholder copy to rewrite in
- * your own words. Set SHOW_TODO_TAGS to false to hide the markers.
- */
-const SHOW_TODO_TAGS = true;
-
-function Todo() {
-  if (!SHOW_TODO_TAGS) return null;
-  return (
-    <span className="ml-2 inline-block rounded-[6px] border border-dashed border-negative px-1.5 py-0.5 align-middle text-caption font-semibold text-negative">
-      TODO: rewrite in your words
-    </span>
-  );
-}
+const REPO_URL = "https://github.com/garrygrewal/plainly-prototype";
 
 const principles = [
   {
-    title: "Say it in words first",
-    body: "Every number comes with a sentence. “64%” becomes “Likely: the market thinks this happens about 2 times in 3.” People reason better with natural frequencies than with percentages or cents.",
+    title: "Explain it in words first",
+    body: "Icons and colours shouldn’t carry the meaning on their own. Every number comes with a sentence, and when the price moves, the app says why. Plain language is clearer than percentages or dollars: “64%” becomes “Likely: about 2 times in 3.”",
   },
   {
-    title: "Show why it moved",
-    body: "A price that jumps without a reason feels like a slot machine. Every big move is pinned to the moment that caused it, and tapping it explains the move in one line.",
-  },
-  {
-    title: "Explain by consequence",
-    body: "Nobody needs the word “liquidity”. They need to know that a $50 trade moves this price about 1 point and $500 moves it about 9, and what their own trade will do before they make it.",
+    title: "Avoid jargon",
+    body: "New users don’t think in words like liquidity, price impact or points, so the app doesn’t use them. It says what happens in everyday terms instead: “A $50 trade moves the price about 1¢.”",
   },
   {
     title: "Calm by default",
-    body: "Most you can lose is always on screen. No countdowns, streaks, confetti or flashing. Cash-out is compared with holding, both ways, without a nudge. Responsible-trading cues are part of the product, not a legal footer.",
+    body: "No countdowns, streaks, confetti or flashing. This isn’t a casino. The most you can lose is always on screen, and responsible gambling is a core part of the product, not something slapped onto the footer.",
   },
 ];
 
@@ -59,29 +42,12 @@ const decisions = [
     over: "Decimal or moneyline odds",
     why: "Odds formats are sportsbook shorthand, and they hide the idea that price equals probability.",
   },
-  {
-    chose: "Event markers on the chart",
-    over: "A separate news or play-by-play feed",
-    why: "The cause sits right on the effect, so the explanation is where the eye already is.",
-  },
-  {
-    chose: "A real market maker (LMSR) under the mock data",
-    over: "Hand-picked numbers",
-    why: "Payout, average price, price impact and cash-out value always agree with each other, because they come from the same maths.",
-  },
-  {
-    chose: "The host app’s tinted green Yes and red No, always with a label",
-    over: "My own blue and orange outcome colours",
-    why: "Matching the existing Predictions pattern makes the feature feel native. The words Yes and No are always on the pill, and gains and losses carry a sign and an arrow, so colour is never the only cue.",
-  },
 ];
 
 const next = [
-  "Comprehension test: do “2 times in 3” and the liquidity line beat percentages alone? Unmoderated, with 5 or 6 comprehension questions per variant.",
-  "Do “why it moved” explanations make people more confident, or do they encourage chasing moves?",
-  "Cash-out: can people predict what they’d get before they open the sheet?",
-  "Notifications: which moments are worth an interruption, and how often before it feels like pressure?",
-  "Onchain realities: network fees, settlement time and wallet confirmation, and how to explain them in the same plain voice.",
+  "Cash-out: can people predict roughly what they’d get before they open the sheet?",
+  "“Why it moved”: do the explanations make people more confident, or do they encourage chasing moves?",
+  "Notifications: which moments are worth an interruption, and how often before it starts to feel like pressure?",
 ];
 
 export default function About() {
@@ -100,26 +66,24 @@ export default function About() {
           <p className="text-subhead font-semibold text-ink-2">Plainly · case study</p>
           <h1 className="mt-2 text-large-title font-bold text-balance">Prediction markets that explain themselves</h1>
           <p className="mt-4 text-body text-ink-2">
-            A concept prototype by [TODO: your name], lead product designer. It follows one live
-            hockey game from discovery to cash-out, and turns every price into plain words.
-            <Todo />
+            A concept prototype by Garry Grewal. It follows one live hockey game from discovery to
+            cash-out, and puts every price into plain words.
           </p>
         </header>
 
-        <Section title="The problem" todo>
+        <Section title="The problem">
           <p>
-            A prediction market packs three ideas into one number. “64¢” is a price, a probability
-            and a bet all at once, and most people only see one of them. Then the number moves during
-            a game and nothing says why. People who don’t trade every day can’t tell a good price from
-            a bad one, or what a trade will cost them beyond the sticker price.
+            I believe the job of a prediction market is to make three things abundantly clear: the
+            chance, the cost, and why the market is moving. Trust is a big part of any financial
+            tool, and prediction markets make it hard to earn.
           </p>
           <p className="mt-3">
-            The job: make probabilities, liquidity and market mechanics feel obvious, without hiding
-            the risk.
+            Numbers move without making it clear why. New users can’t tell a good price from a bad
+            one, or what a trade will really cost them.
           </p>
         </Section>
 
-        <Section title="Four principles" todo>
+        <Section title="Three principles">
           <ol className="space-y-5">
             {principles.map((p, i) => (
               <li key={p.title} className="flex gap-4">
@@ -135,7 +99,7 @@ export default function About() {
           </ol>
         </Section>
 
-        <Section title="Key decisions" todo>
+        <Section title="Key decisions">
           <ul className="space-y-2">
             {decisions.map((d) => (
               <li key={d.chose} className="rounded-card bg-surface p-4">
@@ -147,7 +111,7 @@ export default function About() {
           </ul>
         </Section>
 
-        <Section title="What I’d research and test next" todo>
+        <Section title="What I’d research and test next">
           <ul className="list-disc space-y-2 pl-5 marker:text-ink-3">
             {next.map((n) => (
               <li key={n}>{n}</li>
@@ -155,12 +119,21 @@ export default function About() {
           </ul>
         </Section>
 
-        <Section title="How I built it" todo>
+        <Section title="How I built it">
           <p>
-            I built this with an AI coding agent (Claude Code) in [TODO: time]. I wrote the brief and
-            the principles, set the visual and motion direction, and wrote and edited the copy. The
-            agent drafted the code and I reviewed it, screen by screen. The pricing maths lives in one
-            commented module with unit tests, so the numbers can be checked, not just trusted.
+            I built this in a couple of hours with an AI coding agent (Claude Code). I wrote the
+            brief and the principles, set the visual and motion direction, and wrote and edited the
+            copy. The agent drafted the code, and I reviewed it screen by screen. The pricing maths
+            lives in one commented module with unit tests, so the numbers can be checked, not just
+            trusted.
+          </p>
+          <p className="mt-3">
+            <a
+              href={REPO_URL}
+              className="inline-flex min-h-11 items-center font-semibold text-ink underline decoration-ink-3/50 decoration-2 underline-offset-4 hover:decoration-ink"
+            >
+              See the code on GitHub
+            </a>
           </p>
           <p className="mt-3 text-subhead text-ink-3">
             Next.js, TypeScript, Tailwind CSS and Motion. A hand-drawn SVG chart. Seeded simulation,
@@ -180,21 +153,10 @@ export default function About() {
   );
 }
 
-function Section({
-  title,
-  todo,
-  children,
-}: {
-  title: string;
-  todo?: boolean;
-  children: React.ReactNode;
-}) {
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="mt-12">
-      <h2 className="text-title2 font-bold">
-        {title}
-        {todo && <Todo />}
-      </h2>
+      <h2 className="text-title2 font-bold">{title}</h2>
       <div className="mt-4 text-body text-ink-2">{children}</div>
     </section>
   );

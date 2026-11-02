@@ -148,7 +148,7 @@ function buildNotice(
         ? paid > 0
           ? `Your shares paid out ${usd(paid)}. It’s in your balance.`
           : "Your shares didn’t pay out this time."
-        : `The market settled on ${sim.resolved === "yes" ? m.yesLabel : m.noLabel}.`,
+        : `The market has ended: ${sim.resolved === "yes" ? m.yesLabel : m.noLabel}.`,
     };
   }
 

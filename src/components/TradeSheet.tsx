@@ -3,7 +3,7 @@
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useId, useState } from "react";
 import { type BuyQuote, type Side, quoteBuy } from "@/lib/market/lmsr";
-import { cents, shares, signedPts, usd } from "@/lib/format";
+import { cents, shares, signedCents, usd } from "@/lib/format";
 import { useDemo } from "@/lib/store";
 import { AnimatedNumber } from "./AnimatedNumber";
 import { useBalance, useMarketView } from "./hooks";
@@ -189,13 +189,13 @@ function TradeForm({
           explanation="Each share you buy nudges the price up a little, so you pay slightly more on average than the price right now. Bigger trades pay more."
         />
         <KeyValueRow
-          label="Price impact"
-          value={signedPts(q.impactPts)}
-          sub={`${(q.priceBefore * 100).toFixed(1)}% → ${(q.priceAfter * 100).toFixed(1)}%`}
+          label="Your trade moves the price"
+          value={signedCents(q.impactPts)}
+          sub={`${cents(q.priceBefore, 1)} → ${cents(q.priceAfter, 1)}`}
           onInfo={() => toggle("impact")}
           infoExpanded={info === "impact"}
-          infoLabel="What is price impact?"
-          explanation="How far your own trade moves the chance. Small in busy markets, bigger in quiet ones."
+          infoLabel="Why does my trade move the price?"
+          explanation="Buying shares pushes the price up for the next person. Busy markets barely move. Quiet ones move more."
         />
         <KeyValueRow
           label="Profit if right"
@@ -209,7 +209,7 @@ function TradeForm({
 
       {q.impactPts > 4 && (
         <p className="mt-2 rounded-tile bg-sheet-fill px-3 py-2.5 text-footnote text-ink-2">
-          This is a big trade for this market. It moves the price {Math.round(q.impactPts)} points, so
+          This is a big trade for this market. It moves the price {Math.round(q.impactPts)}¢, so
           your average price is worse. Smaller trades get closer to {cents(priceNow)}.
         </p>
       )}

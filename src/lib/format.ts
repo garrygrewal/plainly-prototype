@@ -22,11 +22,18 @@ export const pct = (p: number) => `${Math.round(p * 100)}%`;
 export const cents = (p: number, decimals = 0) =>
   `${(p * 100).toFixed(decimals)}¢`;
 
-/** 1.234 → "+1.2 pts" */
-export function signedPts(d: number, decimals = 1): string {
+/** A change in chance, in points, said the everyday way: 12.3 → "+12%" */
+export function signedChance(d: number): string {
+  const v = Math.round(d);
+  if (v === 0) return "0%";
+  return `${v > 0 ? "+" : "−"}${Math.abs(v)}%`;
+}
+
+/** A change in price, in cents: 1.234 → "+1.2¢" */
+export function signedCents(d: number, decimals = 1): string {
   const v = Number(d.toFixed(decimals));
-  if (v === 0) return `0 pts`;
-  return `${v > 0 ? "+" : "−"}${Math.abs(v).toFixed(decimals)} pts`;
+  if (v === 0) return "0¢";
+  return `${v > 0 ? "+" : "−"}${Math.abs(v).toFixed(decimals)}¢`;
 }
 
 /** "+18%" / "−4%" */

@@ -18,7 +18,7 @@ const gullsLynx: LiveMarket = {
   volume: 48_200,
   followed: true,
   resolves:
-    "Settles when the game ends. Overtime and shootouts count. Gulls win: Yes pays $1 a share. Lynx win: No pays $1.",
+    "Pays out when the game ends. Overtime and shootouts count. Gulls win: Yes pays $1 a share. Lynx win: No pays $1.",
   b: 2400,
   teams: {
     home: { city: "Harbourview", name: "Gulls", abbr: "HBV" },
@@ -158,7 +158,7 @@ const heronsFoxes: LiveMarket = {
   volume: 21_700,
   followed: false,
   resolves:
-    "Settles when the game ends. Overtime and shootouts count. Herons win: Yes pays $1 a share. Foxes win: No pays $1.",
+    "Pays out when the game ends. Overtime and shootouts count. Herons win: Yes pays $1 a share. Foxes win: No pays $1.",
   b: 1500,
   teams: {
     home: { city: "Lakeport", name: "Herons", abbr: "LKP" },
@@ -243,7 +243,7 @@ const gullsTop3: StaticMarket = {
   category: "Hockey · Season",
   volume: 112_400,
   followed: true,
-  resolves: "Settles when the regular season ends on April 18.",
+  resolves: "Pays out when the regular season ends on April 18.",
   b: 3000,
   status: "open",
   pYes: 0.41,
@@ -260,7 +260,7 @@ const pinesTide: StaticMarket = {
   category: "Hockey · Northshore League",
   volume: 9_300,
   followed: false,
-  resolves: "Settles when the game ends. Overtime goals count; shootouts don't.",
+  resolves: "Pays out when the game ends. Overtime goals count; shootouts don't.",
   b: 1200,
   status: "upcoming",
   when: "tonight at 7:30 pm",
@@ -278,7 +278,7 @@ const boxOffice: StaticMarket = {
   category: "Culture · Film",
   volume: 33_800,
   followed: false,
-  resolves: "Settles Monday, using the published weekend totals.",
+  resolves: "Pays out Monday, using the published weekend totals.",
   b: 2200,
   status: "open",
   pYes: 0.72,
@@ -295,7 +295,7 @@ const ferryLine: StaticMarket = {
   category: "Local news",
   volume: 15_100,
   followed: false,
-  resolves: "Settles Dec 31, based on the city council’s published vote record.",
+  resolves: "Pays out Dec 31, based on the city council’s published vote record.",
   b: 1800,
   status: "open",
   pYes: 0.23,

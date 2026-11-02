@@ -200,7 +200,7 @@ function MarketCard({ id }: { id: string }) {
           <p className="truncate text-subhead">{m.yesLabel}</p>
           {settled ? (
             <p className="flex items-center gap-1 text-footnote text-ink-2">
-              <Settled size={14} /> Settled: {sim.resolved === "yes" ? m.yesLabel : m.noLabel}
+              <Settled size={14} /> Result: {sim.resolved === "yes" ? m.yesLabel : m.noLabel}
             </p>
           ) : (
             <p className="num text-footnote text-ink-2">

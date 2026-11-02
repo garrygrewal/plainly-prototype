@@ -128,7 +128,7 @@ export function CashOutSheet({
           Cash out {usd(position.cashOut)}
         </Button>
         <Button full variant="plain" size="md" className="mt-1" onClick={onClose}>
-          Keep my position
+          Keep my shares
         </Button>
       </SheetFooter>
     </div>

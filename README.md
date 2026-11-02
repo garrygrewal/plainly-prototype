@@ -7,9 +7,9 @@ A concept prototype. It follows one live hockey game from discovery to cash-out,
 ## What to look at (2 minutes)
 
 1. **Predictions** (`/`): six markets with the chance in words ("Likely · 71%"), tinted Yes/No buttons, live scores and a *Following* tab.
-2. **Market detail** (`/m/gulls-lynx`): the big number, translated ("about 3 times in 4"). Below it, a chart with tappable event markers, and ⓘ explainers for the chance, shares, liquidity and settlement.
-3. **Trade sheet**: pick Yes or No and an amount. The summary updates live: payout if right, most you can lose, average price, price impact.
-4. **Live position**: the game runs at 20× speed. Watch *worth now*, P&L, *if it ended now* and the cash-out value move with each goal.
+2. **Market detail** (`/m/gulls-lynx`): the big number, translated ("about 3 times in 4"). Below it, a chart with tappable event markers, and ⓘ explainers for the chance, shares, how much a trade moves the price, and how it pays out.
+3. **Trade sheet**: pick Yes or No and an amount. The summary updates live: payout if right, most you can lose, average price, and how much your trade moves the price.
+4. **Live position**: the game runs at 20× speed. Watch *worth now*, *up so far*, *if it ended now* and the cash-out value move with each goal.
 5. **Come-back card**: a notification when something big happens. Tap it to jump to the moment.
 6. **`/about`**: the case study.
 
@@ -39,7 +39,7 @@ A two-outcome **LMSR** (logarithmic market scoring rule) market maker. The cost 
 
 - spending $50 always buys exactly $50 of shares,
 - payout, average price, price impact and cash-out value all come from the same maths and always agree,
-- the liquidity line ("$50 moves it about 1 point, $500 about 9") is computed from the live market, not written by hand.
+- the "a $50 trade moves the price about 1¢, $500 about 9¢" line is computed from the live market, not written by hand.
 
 ### Simulation: `src/lib/sim/`
 
@@ -77,8 +77,3 @@ A Zustand store holds the demo clock, a ledger of your trades, payouts at settle
 Zero config. Import the GitHub repo at [vercel.com/new](https://vercel.com/new) and accept the defaults (framework: Next.js). Every push to `main` deploys.
 
 The Open Graph image URL uses Vercel's production domain automatically. To use a custom domain, set `NEXT_PUBLIC_SITE_URL` (e.g. `https://plainly.example.com`) in the Vercel project settings.
-
-## Make it yours
-
-- `/about` (`src/app/about/page.tsx`) has placeholder copy, with each section marked **TODO**. Rewrite it in your own words, then set `SHOW_TODO_TAGS = false`.
-- The intro line beside the phone is in `src/components/AppShell.tsx`.

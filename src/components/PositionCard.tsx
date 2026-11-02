@@ -63,7 +63,7 @@ export function PositionCard({ view }: { view: MarketView }) {
       className="space-y-3"
     >
       <div>
-        <SectionHeader id="pos-title">Your position</SectionHeader>
+        <SectionHeader id="pos-title">Your shares</SectionHeader>
         <p className="num text-footnote text-ink-2">{held}</p>
       </div>
 
@@ -74,7 +74,7 @@ export function PositionCard({ view }: { view: MarketView }) {
           sub={`You paid ${usd(position.cost)}`}
         />
         <Stat
-          label="P&L"
+          label={position.pnl >= 0 ? "Up so far" : "Down so far"}
           value={
             <Change value={position.pnl} className="inline-flex items-center gap-1">
               <Arrow up={position.pnl >= 0} />
@@ -91,7 +91,7 @@ export function PositionCard({ view }: { view: MarketView }) {
           />
         ) : (
           <Stat
-            label="If it settles Yes"
+            label="If Yes wins"
             value={usd(position.payoutIfYes)}
             sub={`If No: ${usd(position.payoutIfNo)}`}
           />

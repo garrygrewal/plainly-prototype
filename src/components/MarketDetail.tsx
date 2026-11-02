@@ -11,7 +11,7 @@ import {
   likelihoodWord,
   ordinal,
   pct,
-  signedPts,
+  signedChance,
 } from "@/lib/format";
 import { impactOf } from "@/lib/market/lmsr";
 import { eventMove } from "@/lib/sim/engine";
@@ -74,7 +74,7 @@ export function MarketDetail({ id }: { id: string }) {
             <KeyValueList>
               <KeyValueRow
                 label="Chance now"
-                value={status === "final" ? "Settled" : `${pct(view.pYes)} · ${cents(view.pYes)} a share`}
+                value={status === "final" ? "Ended" : `${pct(view.pYes)} · ${cents(view.pYes)} a share`}
                 onInfo={() => setTopic("chance")}
                 infoLabel="Why the price is the chance"
               />
@@ -90,7 +90,7 @@ export function MarketDetail({ id }: { id: string }) {
           </Card>
           <Card className="divide-y divide-line p-0">
             <NavRow label="How this works" onClick={() => setTopic("how")} />
-            <NavRow label="How it settles" onClick={() => setTopic("settles")} />
+            <NavRow label="How it pays out" onClick={() => setTopic("settles")} />
           </Card>
         </section>
       </main>
@@ -182,7 +182,7 @@ function ProbabilityHero({ view }: { view: MarketView }) {
       <Tile aria-label="Result" className="flex items-start gap-3 py-4">
         <Settled size={24} className="mt-0.5 shrink-0 text-ink" />
         <div>
-          <p className="text-footnote text-ink-2">Settled</p>
+          <p className="text-footnote text-ink-2">Final result</p>
           <p className="text-title2 font-semibold">{won ? m.yesLabel : m.noLabel}</p>
           <p className="mt-1 text-subhead text-ink-2">
             {won ? "Yes" : "No"} shares paid $1 each. {won ? "No" : "Yes"} shares paid nothing.
@@ -206,8 +206,7 @@ function ProbabilityHero({ view }: { view: MarketView }) {
         ) : (
           <Change value={moved} className="inline-flex items-center gap-1">
             <Arrow up={moved > 0} />
-            {moved > 0 ? "+" : "−"}
-            {Math.abs(moved)} {Math.abs(moved) === 1 ? "pt" : "pts"}
+            {signedChance(moved)}
             <span className="text-ink-2">{m.kind === "live" ? "since puck drop" : "in 30 days"}</span>
           </Change>
         )}
@@ -382,7 +381,7 @@ function EventExplainer({
               {pct(mv.before)} → {pct(mv.after)}
             </span>
             <Change value={moved}>
-              {signedPts(moved, 0)}
+              {signedChance(moved)}
               {!mv.settled && " so far"}
             </Change>
           </p>
@@ -396,16 +395,10 @@ function EventExplainer({
   );
 }
 
-function points(n: number): string {
-  if (n < 0.5) return "<1 pt";
-  const r = Math.round(n);
-  return `~${r} ${r === 1 ? "pt" : "pts"}`;
-}
-
-function inWords(n: number): string {
-  if (n < 0.5) return "less than 1 point";
-  const r = Math.round(n);
-  return `about ${r} ${r === 1 ? "point" : "points"}`;
+/** A price move in cents. A share's price in cents is its chance in percent, so 1¢ is 1 point. */
+function moveCents(n: number): string {
+  if (n < 0.5) return "under 1¢";
+  return `about ${Math.round(n)}¢`;
 }
 
 /** Liquidity by consequence. Averages both sides so the answer doesn't depend on which you pick. */
@@ -418,12 +411,12 @@ function LiquidityRows({ view, onInfo }: { view: MarketView; onInfo: () => void 
   return (
     <>
       <KeyValueRow
-        label="A $50 trade moves it"
-        value={points(small)}
+        label="A $50 trade moves the price"
+        value={moveCents(small)}
         onInfo={onInfo}
         infoLabel="How much will my trade move the price?"
       />
-      <KeyValueRow label="A $500 trade moves it" value={points(big)} />
+      <KeyValueRow label="A $500 trade moves it" value={moveCents(big)} />
     </>
   );
 }
@@ -490,7 +483,7 @@ function Explainer({ topic, view, titleId }: { topic: Topic; view: MarketView; t
           {title("How much will my trade move the price?")}
           <div className={body}>
             <p>
-              {lead} A $50 trade moves the price {inWords(small)}. A $500 trade moves it {inWords(big)}.
+              {lead} A $50 trade moves the price {moveCents(small)}. A $500 trade moves it {moveCents(big)}.
             </p>
             <p>The bigger the trade, the worse your average price. You’ll see exactly how much before you buy.</p>
           </div>
@@ -505,7 +498,7 @@ function Explainer({ topic, view, titleId }: { topic: Topic; view: MarketView; t
             {[
               ["A share pays $1 if you’re right", `Buy a “${m.yesLabel}” share and it pays $1 if that happens, or $0 if it doesn’t.`],
               ["The price is the chance", "A share that costs 64¢ means people trading here think it’s about 64% likely."],
-              ["It settles on its own", "Winning shares pay out to your balance automatically. You can also sell any time before then."],
+              ["It pays out on its own", "Winning shares pay out to your balance automatically. You can also sell any time before then."],
             ].map(([t, d], i) => (
               <li key={t} className="flex gap-3">
                 <span aria-hidden className="num grid size-6 shrink-0 place-items-center rounded-full bg-sheet-fill text-footnote font-semibold">
@@ -523,7 +516,7 @@ function Explainer({ topic, view, titleId }: { topic: Topic; view: MarketView; t
     case "settles":
       return (
         <>
-          {title("How it settles")}
+          {title("How it pays out")}
           <div className={body}>
             <p>{m.resolves}</p>
             <p>When the result is known, winning shares pay out to your balance automatically.</p>
@@ -549,7 +542,7 @@ function chartSummary(view: MarketView, events: GameEvent[]): string {
   const who = m.yesLabel.replace(" win", "");
   const base = `The ${who}’ chance was ${pct(start)} at puck drop and is ${pct(pYes)} now.`;
   return biggest
-    ? `${base} Biggest move so far: ${biggest.ev.title} in the ${eventClock(biggest.ev.t).split(",")[0]} (${signedPts(biggest.d * 100, 0)}).`
+    ? `${base} Biggest move so far: ${biggest.ev.title} in the ${eventClock(biggest.ev.t).split(",")[0]} (${signedChance(biggest.d * 100)}).`
     : base;
 }
 
@@ -560,7 +553,7 @@ function TradeBar({ view }: { view: MarketView }) {
   if (status === "final") {
     return (
       <div className="sticky bottom-0 z-10 border-t border-line bg-bg/90 px-4 pt-4 pb-[max(16px,var(--inset-bottom))] text-center text-subhead text-ink-2 backdrop-blur-xl">
-        This market has settled. Trading is closed.
+        This market has ended. Trading is closed.
       </div>
     );
   }

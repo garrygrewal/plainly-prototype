@@ -86,7 +86,7 @@ describe("buying", () => {
     }
   });
 
-  it("matches the liquidity copy: $50 moves ~1 pt, $500 moves several", () => {
+  it("matches the copy: $50 moves the price ~1¢, $500 moves it several", () => {
     expect(impactOf(market, "yes", 50)).toBeGreaterThan(0.6);
     expect(impactOf(market, "yes", 50)).toBeLessThan(1.4);
     expect(impactOf(market, "yes", 500)).toBeGreaterThan(5);
